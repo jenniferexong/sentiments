@@ -1,13 +1,23 @@
+import { CardContentPreviewField } from '@/sanity/components/CardContentPreviewField';
 import { CardUrlField } from '@/sanity/components/CardUrlField';
 import { BookIcon } from '@sanity/icons';
 import dayjs from 'dayjs';
 import { defineField, defineType } from 'sanity';
+
+const enum Group {
+  Details = 'details',
+  Content = 'content',
+}
 
 export const cardType = defineType({
   name: 'card',
   title: 'Card',
   type: 'document',
   icon: BookIcon,
+  groups: [
+    { name: Group.Details, title: 'Details', default: true },
+    { name: Group.Content, title: 'Content' },
+  ],
   fields: [
     defineField({
       name: 'URL',
@@ -15,16 +25,19 @@ export const cardType = defineType({
       components: {
         field: CardUrlField,
       },
+      group: Group.Details,
     }),
     defineField({
       name: 'title',
       type: 'string',
       validation: (rule) => rule.required(),
+      group: Group.Details,
     }),
     defineField({
       name: 'recipient',
       type: 'string',
       validation: (rule) => rule.required(),
+      group: Group.Details,
     }),
     defineField({
       name: 'date',
@@ -33,6 +46,7 @@ export const cardType = defineType({
         dateFormat: 'DD-MM-YYYY',
       },
       validation: (rule) => rule.required(),
+      group: Group.Details,
     }),
     defineField({
       name: 'coverImage',
@@ -40,10 +54,30 @@ export const cardType = defineType({
       options: {
         hotspot: true,
       },
+      group: Group.Content,
     }),
     defineField({
       name: 'content',
       type: 'cardContent',
+      group: Group.Content,
+    }),
+    defineField({
+      name: 'cardColor',
+      type: 'color',
+      group: Group.Content,
+    }),
+    defineField({
+      name: 'textColor',
+      type: 'color',
+      group: Group.Content,
+    }),
+    defineField({
+      name: 'contentPreview',
+      type: 'string',
+      components: {
+        field: CardContentPreviewField,
+      },
+      group: Group.Content,
     }),
   ],
   preview: {
