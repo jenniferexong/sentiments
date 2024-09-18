@@ -5,8 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "npm run sanity:build",
     "start": "next start",
     "lint": "eslint . --fix",
+    "sanity:schema-extract": "sanity schema extract --workspace --path sanity/generated/schema.json --enforce-required-fields",
+    "sanity:typegen": "sanity typegen generate",
+    "sanity:build": "npm run sanity:schema-extract && npm run sanity:typegen",
     "prepare": "husky"
   },
   "dependencies": {

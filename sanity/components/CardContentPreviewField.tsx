@@ -2,8 +2,8 @@ import { Card, Stack, Text } from '@sanity/ui';
 import { useFormValue } from 'sanity';
 
 export const CardContentPreviewField: React.FC = () => {
-  const cardColor = useFormValue(['cardColor']);
-  const textColor = useFormValue(['textColor']);
+  const cardColor = useFormValue(['theme.cardColor']);
+  const textColor = useFormValue(['theme.textColor']);
 
   return (
     <Stack space={4}>

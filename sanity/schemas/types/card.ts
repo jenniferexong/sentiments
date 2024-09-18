@@ -1,4 +1,3 @@
-import { CardContentPreviewField } from '@/sanity/components/CardContentPreviewField';
 import { CardUrlField } from '@/sanity/components/CardUrlField';
 import { BookIcon } from '@sanity/icons';
 import dayjs from 'dayjs';
@@ -62,21 +61,8 @@ export const cardType = defineType({
       group: Group.Content,
     }),
     defineField({
-      name: 'cardColor',
-      type: 'color',
-      group: Group.Content,
-    }),
-    defineField({
-      name: 'textColor',
-      type: 'color',
-      group: Group.Content,
-    }),
-    defineField({
-      name: 'contentPreview',
-      type: 'string',
-      components: {
-        field: CardContentPreviewField,
-      },
+      name: 'theme',
+      type: 'cardTheme',
       group: Group.Content,
     }),
   ],
