@@ -39,6 +39,12 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      name: 'accessCode',
+      type: 'string',
+      validation: (rule) => rule.required(),
+      group: Group.Details,
+    }),
+    defineField({
       name: 'date',
       type: 'date',
       options: {
