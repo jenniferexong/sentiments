@@ -8,7 +8,7 @@ export const CardUrlField: React.FC = () => {
 
   return (
     <Text>
-      <a href={url} target="_blank">
+      <a href={url} target="_blank" rel="noreferrer">
         {url}
       </a>
     </Text>

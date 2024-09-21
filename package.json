@@ -5,11 +5,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "npm run sanity:build",
     "start": "next start",
     "lint": "eslint . --fix",
+    "sanity:schema-extract": "sanity schema extract --workspace --path sanity/generated/schema.json --enforce-required-fields",
+    "sanity:typegen": "sanity typegen generate",
+    "sanity:build": "npm run sanity:schema-extract && npm run sanity:typegen",
     "prepare": "husky"
   },
   "dependencies": {
+    "@sanity/color-input": "^3.1.1",
     "@sanity/icons": "^3.3.1",
     "@sanity/image-url": "^1.0.2",
     "@sanity/ui": "^2.8.8",
@@ -26,6 +31,8 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "eslint-config-prettier": "^9.1.0",
