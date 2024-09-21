@@ -19,7 +19,8 @@ export const cardType = defineType({
   ],
   fields: [
     defineField({
-      name: 'URL',
+      title: 'URL',
+      name: 'url',
       type: 'string',
       components: {
         field: CardUrlField,
@@ -27,24 +28,28 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      title: 'Title',
       name: 'title',
       type: 'string',
       validation: (rule) => rule.required(),
       group: Group.Details,
     }),
     defineField({
+      title: 'Recipient',
       name: 'recipient',
       type: 'string',
       validation: (rule) => rule.required(),
       group: Group.Details,
     }),
     defineField({
+      title: 'Access Code',
       name: 'accessCode',
-      type: 'string',
+      type: 'maskedString',
       validation: (rule) => rule.required(),
       group: Group.Details,
     }),
     defineField({
+      title: 'Date',
       name: 'date',
       type: 'date',
       options: {
@@ -54,6 +59,7 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      title: 'Cover Image',
       name: 'coverImage',
       type: 'image',
       options: {
@@ -62,11 +68,13 @@ export const cardType = defineType({
       group: Group.Content,
     }),
     defineField({
+      title: 'Card Content',
       name: 'content',
       type: 'cardContent',
       group: Group.Content,
     }),
     defineField({
+      title: 'Title',
       name: 'theme',
       type: 'cardTheme',
       group: Group.Content,
@@ -81,7 +89,7 @@ export const cardType = defineType({
     },
     prepare(selection) {
       const { title, recipient, date, coverImage } = selection;
-      const formattedDate = dayjs(date).format('dddd D MMMM YYYY');
+      const formattedDate = dayjs(date).format('ddd D MMM YYYY');
       return {
         title,
         subtitle: `to ${recipient} - ${formattedDate}`,

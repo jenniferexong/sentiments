@@ -21,7 +21,7 @@ export default async function Card(props: Props) {
     <div className="flex h-screen flex-col items-center justify-center gap-4">
       <h1>Card {cardId}</h1>
       <h1>Code {data.accessCode}</h1>
-      <pre className="text-xs">{JSON.stringify(data, null, 2)}</pre>
+      {/* <pre className="text-xs">{JSON.stringify(data, null, 2)}</pre> */}
     </div>
   );
 }

@@ -7,6 +7,7 @@ export const cardThemeType = defineType({
   type: 'object',
   fields: [
     defineField({
+      title: 'Card Colour',
       name: 'cardColor',
       type: 'color',
       options: {
@@ -14,6 +15,7 @@ export const cardThemeType = defineType({
       },
     }),
     defineField({
+      title: 'Text Colour',
       name: 'textColor',
       type: 'color',
       options: {
@@ -21,6 +23,7 @@ export const cardThemeType = defineType({
       },
     }),
     defineField({
+      title: 'Content Preview',
       name: 'contentPreview',
       type: 'string',
       components: {
