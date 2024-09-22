@@ -8,7 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {},
+      colors: {
+        charcoal: '#151515',
+        error: '#EE4F4F',
+      },
+      fontFamily: {
+        inter: ['var(--font-inter)'],
+        'ubunto-mono': ['var(--font-ubunto-mono)'],
+        'reddit-mono': ['var(--font-reddit-mono)'],
+      },
     },
   },
   plugins: [],
