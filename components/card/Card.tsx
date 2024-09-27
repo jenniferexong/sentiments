@@ -5,6 +5,7 @@ import { Html, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { DoubleSide, FrontSide, Matrix4 } from 'three';
 import { CardContent } from '@/components/card/CardContent';
+import { DEFAULT_CARD_COLOR } from '@/data/constants';
 
 type Props = CardData;
 
@@ -15,7 +16,7 @@ const CARD_HEIGHT_PX = CARD_WIDTH_PX * CARD_RATIO;
 const CARD_HEIGHT = CARD_WIDTH * CARD_RATIO;
 
 export const Card: React.FC<Props> = (props) => {
-  const { content } = props;
+  const { theme } = props;
 
   return (
     <div className="fixed inset-0">
@@ -43,12 +44,18 @@ export const Card: React.FC<Props> = (props) => {
           castShadow
         >
           <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial color="white" side={DoubleSide} />
+          <meshStandardMaterial
+            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+            side={DoubleSide}
+          />
         </mesh>
         {/* Inside page */}
         <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial color="white" side={DoubleSide} />
+          <meshStandardMaterial
+            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+            side={DoubleSide}
+          />
           <Html
             transform
             occlude
@@ -64,7 +71,7 @@ export const Card: React.FC<Props> = (props) => {
                 height: `${CARD_HEIGHT_PX}px`,
               }}
             >
-              <CardContent {...content} />
+              <CardContent {...props} />
             </div>
           </Html>
         </mesh>

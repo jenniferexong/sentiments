@@ -12,7 +12,7 @@ const components: Partial<PortableTextReactComponents> = {
   },
   list: {
     bullet: ({ children }) => <ul className="ml-6 list-disc">{children}</ul>,
-    number: ({ children }) => <ol className="ml-6">{children}</ol>,
+    number: ({ children }) => <ol className="ml-6 list-decimal">{children}</ol>,
   },
   marks: {
     link: ({ children, value }) => {
@@ -33,18 +33,23 @@ const components: Partial<PortableTextReactComponents> = {
   },
 };
 
-type Props = CardData['content'];
+type Props = Pick<CardData, 'content' | 'theme'>;
 
 export const CardContent: React.FC<Props> = (props) => {
-  const { title, message, conclusion } = props;
+  const { content, theme } = props;
 
   return (
-    <div className="flex h-full select-none flex-col justify-between px-10 py-16">
-      <h2 className="text-3xl">{title}</h2>
+    <div
+      className="flex h-full select-none flex-col justify-between px-10 py-16"
+      style={{ color: theme.textColor.hex }}
+    >
+      <h2 className="text-3xl">{content.title}</h2>
       <div className="flex flex-col gap-3">
-        {message && <PortableText value={message} components={components} />}
+        {content.message && (
+          <PortableText value={content.message} components={components} />
+        )}
       </div>
-      <p className="text-3xl">{conclusion}</p>
+      <p className="text-3xl">{content.conclusion}</p>
     </div>
   );
 };
