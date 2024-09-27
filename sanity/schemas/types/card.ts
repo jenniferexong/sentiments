@@ -68,13 +68,14 @@ export const cardType = defineType({
       group: Group.Content,
     }),
     defineField({
-      title: 'Card Content',
+      title: 'Content',
       name: 'content',
       type: 'cardContent',
+      validation: (rule) => rule.required(),
       group: Group.Content,
     }),
     defineField({
-      title: 'Title',
+      title: 'Theme',
       name: 'theme',
       type: 'cardTheme',
       group: Group.Content,
