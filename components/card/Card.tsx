@@ -23,11 +23,11 @@ export const Card: React.FC<Props> = (props) => {
     <div className="fixed inset-0">
       <Canvas shadows={false} gl={{ localClippingEnabled: true }}>
         <color attach="background" args={['#151515']} />
-        <ambientLight intensity={0.1} />
+        <ambientLight intensity={2} />
         <directionalLight
           color="white"
           position={[-2, 3, 1]}
-          intensity={10}
+          intensity={2}
           castShadow
           shadow-mapSize-height={2048}
           shadow-mapSize-width={2048}
@@ -38,7 +38,7 @@ export const Card: React.FC<Props> = (props) => {
         {/* Outside page */}
         <mesh
           matrix={new Matrix4()
-            // .makeRotationY(2.5)
+            .makeRotationY(0.5)
             .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))
             .multiply(new Matrix4().makeRotationY(Math.PI))}
           matrixAutoUpdate={false}
