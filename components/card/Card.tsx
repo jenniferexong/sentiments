@@ -78,7 +78,10 @@ export const Card: React.FC<Props> = (props) => {
         {/* Inside page */}
         <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial side={DoubleSide} />
+          <meshStandardMaterial
+            side={DoubleSide}
+            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+          />
         </mesh>
         <CardContent {...props} />
       </Canvas>

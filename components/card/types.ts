@@ -4,9 +4,9 @@ import {
   PortableTextSpan,
 } from '@portabletext/types';
 
-interface LinkMark extends PortableTextMarkDefinition {
+export interface LinkMark extends PortableTextMarkDefinition {
   _type: 'link';
-  value: { href?: string };
+  href?: string;
 }
 
 export type CardMarks = LinkMark;

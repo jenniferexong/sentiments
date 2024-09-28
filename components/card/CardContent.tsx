@@ -2,17 +2,19 @@ import { CardData, CardThemeData } from '@/data/types';
 import { Text, Root, Container } from '@react-three/uikit';
 import { CARD_HEIGHT, CARD_WIDTH } from './Card';
 import { MeshStandardMaterial } from 'three';
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   CardInlineBlocks,
   CardMarks,
   CardPortableTextBlock,
   CardTextStyles,
+  LinkMark,
 } from '@/components/card/types';
+import { DEFAULT_CARD_TEXT_COLOR } from '@/data/constants';
 
-const CARD_TEXT_SIZE_TITLE = 20;
-const CARD_TEXT_SIZE_HEADING = 16;
-const CARD_TEXT_SIZE = 12;
+const CARD_TEXT_SIZE_TITLE = 16;
+const CARD_TEXT_SIZE_HEADING = 14;
+const CARD_TEXT_SIZE = 10;
 const CARD_TEXT_GAP_HEADING = CARD_TEXT_SIZE_HEADING / 4;
 const CARD_TEXT_GAP = CARD_TEXT_SIZE / 4;
 
@@ -30,10 +32,16 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
       anchorX="left"
       paddingY={24}
       paddingX={20}
-      transformTranslateZ={1}
+      transformTranslateZ={0.1}
+      backgroundOpacity={0}
       panelMaterialClass={MeshStandardMaterial}
     >
-      <Text fontSize={CARD_TEXT_SIZE_TITLE}>{content.title}</Text>
+      <Text
+        fontSize={CARD_TEXT_SIZE_TITLE}
+        color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+      >
+        {content.title}
+      </Text>
       <Container flexDirection="column" gap={8} width="100%">
         {content.message && (
           <CardPortableText
@@ -42,7 +50,12 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
           />
         )}
       </Container>
-      <Text fontSize={CARD_TEXT_SIZE_TITLE}>{content.conclusion}</Text>
+      <Text
+        fontSize={CARD_TEXT_SIZE_TITLE}
+        color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+      >
+        {content.conclusion}
+      </Text>
     </Root>
   );
 };
@@ -94,33 +107,68 @@ type CardPortableTextInlineBlockProps = {
 const CustomPortableTextInlineBlock: React.FC<
   CardPortableTextInlineBlockProps
 > = (props) => {
-  const { data, style, markDefs } = props;
+  const { data, style, markDefs, theme } = props;
 
   if (data._type !== 'span') {
     throw new Error('Unsupported inline block:', data._type);
   }
 
-  // TODO handle link click and hover
-  const isLink =
-    markDefs &&
-    data.marks?.some((mark) => markDefs.some((def) => def._key === mark));
+  const link: LinkMark | undefined = markDefs?.find(
+    (def) => def._type === 'link' && data.marks?.includes(def._key)
+  );
+
+  const handleClick = () => {
+    if (!link) return;
+
+    window.open(link.href, '_blank');
+  };
+
+  const handleHoverChange = (hovering: boolean) => {
+    if (!link) return;
+
+    document.body.style.cursor = hovering ? 'pointer' : 'auto';
+  };
+
+  const textProps = useMemo(
+    () => ({
+      color: theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR,
+      fontSize: style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE,
+      fontWeight: data.marks?.includes('strong') ? 600 : 400,
+      borderBottomWidth: link ? 1 : 0,
+      borderColor: link && (theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR),
+    }),
+    [data.marks, link, style, theme.textColor.hex]
+  );
 
   return data.text
     .trim()
     .split(' ')
     .map((word, index) => {
       return (
-        <Text
-          key={index}
-          width={'auto'}
-          flexGrow={0}
-          fontSize={style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE}
-          fontWeight={data.marks?.includes('strong') ? 'bold' : 'normal'}
-          borderColor={'black'}
-          borderBottomWidth={isLink ? 1 : 0}
-        >
-          {word}
-        </Text>
+        <Container key={index} positionType="relative">
+          {/* 'absolute' position, so we can change font size without effecting the rest of the text */}
+          <Text
+            {...textProps}
+            positionType="absolute"
+            positionLeft="50%"
+            positionTop="50%"
+            transformTranslateX="-50%"
+            transformTranslateY="-50%"
+            onHoverChange={handleHoverChange}
+            onClick={handleClick}
+            hover={
+              link && {
+                fontWeight: textProps.fontWeight + 100,
+              }
+            }
+          >
+            {word}
+          </Text>
+          {/* Ghost element to set correct size of container */}
+          <Text {...textProps} opacity={0}>
+            {word}
+          </Text>
+        </Container>
       );
     });
 };
