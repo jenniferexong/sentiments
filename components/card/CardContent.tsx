@@ -1,55 +1,126 @@
-import { CardData } from '@/data/types';
-import { PortableText, PortableTextReactComponents } from '@portabletext/react';
+import { CardData, CardThemeData } from '@/data/types';
+import { Text, Root, Container } from '@react-three/uikit';
+import { CARD_HEIGHT, CARD_WIDTH } from './Card';
+import { MeshStandardMaterial } from 'three';
+import React from 'react';
+import {
+  CardInlineBlocks,
+  CardMarks,
+  CardPortableTextBlock,
+  CardTextStyles,
+} from '@/components/card/types';
 
-const components: Partial<PortableTextReactComponents> = {
-  block: {
-    h4: ({ children }) => {
-      return <h4 className="text-2xl">{children}</h4>;
-    },
-    normal: ({ children }) => {
-      return <p className="text-lg">{children}</p>;
-    },
-  },
-  list: {
-    bullet: ({ children }) => <ul className="ml-6 list-disc">{children}</ul>,
-    number: ({ children }) => <ol className="ml-6 list-decimal">{children}</ol>,
-  },
-  marks: {
-    link: ({ children, value }) => {
-      return (
-        <span className="relative">
-          <span className="invisible">{children}</span>
-          <a
-            {...value}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 underline transition-all hover:text-xl"
-          >
-            {children}
-          </a>
-        </span>
-      );
-    },
-  },
-};
+const CARD_TEXT_SIZE_TITLE = 20;
+const CARD_TEXT_SIZE_HEADING = 16;
+const CARD_TEXT_SIZE = 12;
+const CARD_TEXT_GAP_HEADING = CARD_TEXT_SIZE_HEADING / 4;
+const CARD_TEXT_GAP = CARD_TEXT_SIZE / 4;
 
-type Props = Pick<CardData, 'content' | 'theme'>;
+type CardContentProps = Pick<CardData, 'content' | 'theme'>;
 
-export const CardContent: React.FC<Props> = (props) => {
+export const CardContent: React.FC<CardContentProps> = (props) => {
   const { content, theme } = props;
 
   return (
-    <div
-      className="flex h-full select-none flex-col justify-between px-10 py-16"
-      style={{ color: theme.textColor.hex }}
+    <Root
+      flexDirection="column"
+      justifyContent="space-between"
+      sizeX={CARD_WIDTH}
+      sizeY={CARD_HEIGHT}
+      anchorX="left"
+      paddingY={24}
+      paddingX={20}
+      transformTranslateZ={1}
+      panelMaterialClass={MeshStandardMaterial}
     >
-      <h2 className="text-3xl">{content.title}</h2>
-      <div className="flex flex-col gap-3">
+      <Text fontSize={CARD_TEXT_SIZE_TITLE}>{content.title}</Text>
+      <Container flexDirection="column" gap={8} width="100%">
         {content.message && (
-          <PortableText value={content.message} components={components} />
+          <CardPortableText
+            data={content.message as CardPortableTextBlock[]}
+            theme={theme}
+          />
         )}
-      </div>
-      <p className="text-3xl">{content.conclusion}</p>
-    </div>
+      </Container>
+      <Text fontSize={CARD_TEXT_SIZE_TITLE}>{content.conclusion}</Text>
+    </Root>
   );
+};
+
+type CardPortableTextProps = {
+  data: CardPortableTextBlock[];
+  theme: CardThemeData;
+};
+
+const CardPortableText: React.FC<CardPortableTextProps> = (props) => {
+  const { data, theme } = props;
+
+  return data.map((block, blockIndex) => {
+    switch (block._type) {
+      case 'block': {
+        return (
+          <Container
+            key={blockIndex}
+            flexDirection="row"
+            flexWrap="wrap"
+            width="100%"
+            gap={block.style === 'h4' ? CARD_TEXT_GAP_HEADING : CARD_TEXT_GAP}
+          >
+            {block.children.map((child, index) => {
+              return (
+                <CustomPortableTextInlineBlock
+                  key={index}
+                  data={child}
+                  markDefs={block.markDefs}
+                  style={block.style}
+                  theme={theme}
+                />
+              );
+            })}
+          </Container>
+        );
+      }
+    }
+  });
+};
+
+type CardPortableTextInlineBlockProps = {
+  data: CardInlineBlocks;
+  style: CardTextStyles | undefined;
+  markDefs: CardMarks[] | undefined;
+  theme: CardThemeData;
+};
+
+const CustomPortableTextInlineBlock: React.FC<
+  CardPortableTextInlineBlockProps
+> = (props) => {
+  const { data, style, markDefs } = props;
+
+  if (data._type !== 'span') {
+    throw new Error('Unsupported inline block:', data._type);
+  }
+
+  // TODO handle link click and hover
+  const isLink =
+    markDefs &&
+    data.marks?.some((mark) => markDefs.some((def) => def._key === mark));
+
+  return data.text
+    .trim()
+    .split(' ')
+    .map((word, index) => {
+      return (
+        <Text
+          key={index}
+          width={'auto'}
+          flexGrow={0}
+          fontSize={style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE}
+          fontWeight={data.marks?.includes('strong') ? 'bold' : 'normal'}
+          borderColor={'black'}
+          borderBottomWidth={isLink ? 1 : 0}
+        >
+          {word}
+        </Text>
+      );
+    });
 };

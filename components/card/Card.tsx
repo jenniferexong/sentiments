@@ -3,17 +3,18 @@
 import { CardData } from '@/data/types';
 import { Html, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { DoubleSide, FrontSide, Matrix4 } from 'three';
+import { DoubleSide, Matrix4 } from 'three';
+import { CARD_RATIO, DEFAULT_CARD_COLOR } from '@/data/constants';
+import { urlFor } from '@/sanity/lib/image';
 import { CardContent } from '@/components/card/CardContent';
-import { DEFAULT_CARD_COLOR } from '@/data/constants';
+import Image from 'next/image';
 
 type Props = CardData;
 
-const CARD_RATIO = 1.414;
-const CARD_WIDTH = 3;
+export const CARD_WIDTH = 3;
+export const CARD_HEIGHT = CARD_WIDTH * CARD_RATIO;
 const CARD_WIDTH_PX = 600;
 const CARD_HEIGHT_PX = CARD_WIDTH_PX * CARD_RATIO;
-const CARD_HEIGHT = CARD_WIDTH * CARD_RATIO;
 
 export const Card: React.FC<Props> = (props) => {
   const { theme } = props;
@@ -38,19 +39,11 @@ export const Card: React.FC<Props> = (props) => {
         <mesh
           matrix={new Matrix4()
             // .makeRotationY(2.5)
-            .makeRotationY(0.1)
-            .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))}
+            .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))
+            .multiply(new Matrix4().makeRotationY(Math.PI))}
           matrixAutoUpdate={false}
           castShadow
         >
-          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial
-            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-            side={DoubleSide}
-          />
-        </mesh>
-        {/* Inside page */}
-        <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
           <meshStandardMaterial
             color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
@@ -62,19 +55,32 @@ export const Card: React.FC<Props> = (props) => {
             scale={0.5}
             distanceFactor={2}
             position={[0, 0, 0.01]}
-            material={<meshStandardMaterial side={FrontSide} opacity={0.1} />}
+            material={<meshStandardMaterial side={DoubleSide} opacity={0.1} />}
           >
             <div
-              className={`scale-[2]`}
+              className="pointer-events-none relative scale-[2] select-none"
               style={{
                 width: `${CARD_WIDTH_PX}px`,
                 height: `${CARD_HEIGHT_PX}px`,
               }}
             >
-              <CardContent {...props} />
+              {props.coverImage?.asset && (
+                <Image
+                  src={urlFor(props.coverImage.asset).url()}
+                  alt=""
+                  fill
+                  objectFit="contain"
+                />
+              )}
             </div>
           </Html>
         </mesh>
+        {/* Inside page */}
+        <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+          <meshStandardMaterial side={DoubleSide} />
+        </mesh>
+        <CardContent {...props} />
       </Canvas>
     </div>
   );

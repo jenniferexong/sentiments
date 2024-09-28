@@ -14,6 +14,7 @@ export const cardContentType = defineType({
     }),
     defineField({
       title: 'Message',
+      description: 'Multiple whitespaces in a row is not supported.',
       name: 'message',
       type: 'array',
       of: [
@@ -23,10 +24,11 @@ export const cardContentType = defineType({
             { title: 'Normal', value: 'normal' },
             { title: 'Heading', value: 'h4' },
           ],
+          lists: [],
           marks: {
             decorators: [
               { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
+              // { title: 'Emphasis', value: 'em' },
             ],
             annotations: [
               {
