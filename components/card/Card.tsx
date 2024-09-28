@@ -33,12 +33,16 @@ export const Card: React.FC<Props> = (props) => {
           shadow-mapSize-width={2048}
           shadow-normalBias={-0.01}
         />
-        <PerspectiveCamera position={[-1, 2, 7]} makeDefault />
-        <OrbitControls target={[CARD_WIDTH / 2, 0, 0]} />
+        <PerspectiveCamera
+          position={[CARD_WIDTH * 1.2, 1, CARD_WIDTH * 2.4]}
+          makeDefault
+        />
+        {/* TODO: Make target the inside page on mobile */}
+        <OrbitControls target={[0, 0, 0]} />
         {/* Outside page */}
         <mesh
           matrix={new Matrix4()
-            .makeRotationY(0.5)
+            .makeRotationY(1)
             .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))
             .multiply(new Matrix4().makeRotationY(Math.PI))}
           matrixAutoUpdate={false}
