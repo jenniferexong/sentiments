@@ -36,3 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 sanity/generated/*
+assets/fonts/generated/*.ttf

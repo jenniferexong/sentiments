@@ -11,7 +11,8 @@
     "sanity:schema-extract": "sanity schema extract --workspace --path sanity/generated/schema.json --enforce-required-fields",
     "sanity:typegen": "sanity typegen generate",
     "sanity:build": "npm run sanity:schema-extract && npm run sanity:typegen",
-    "prepare": "husky"
+    "prepare": "husky",
+    "fontgen": "node scripts/generate-mdsf-font.mjs"
   },
   "dependencies": {
     "@portabletext/types": "^2.0.13",
