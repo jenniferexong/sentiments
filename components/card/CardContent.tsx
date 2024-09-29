@@ -16,11 +16,13 @@ import {
   CardTextStyles,
   LinkMark,
 } from '@/components/card/types';
-import { DEFAULT_CARD_TEXT_COLOR } from '@/data/constants';
+import {
+  CARD_TEXT_SIZE,
+  CARD_TEXT_SIZE_HEADING,
+  CARD_TEXT_SIZE_TITLE,
+  DEFAULT_CARD_TEXT_COLOR,
+} from '@/data/constants';
 
-const CARD_TEXT_SIZE_TITLE = 18;
-const CARD_TEXT_SIZE_HEADING = 16;
-const CARD_TEXT_SIZE = 12;
 const CARD_TEXT_GAP_HEADING = CARD_TEXT_SIZE_HEADING / 4;
 const CARD_TEXT_GAP = CARD_TEXT_SIZE / 4;
 
@@ -48,14 +50,14 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
           bold: 'fonts/Sentiments-Bold.json',
         }}
       >
-        <DefaultProperties fontFamily="sentiments">
+        <DefaultProperties fontFamily="sentiments" lineHeight="80%">
           <Text
             fontSize={CARD_TEXT_SIZE_TITLE}
             color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
           >
             {content.title}
           </Text>
-          <Container flexDirection="column" gap={8} width="100%">
+          <Container flexDirection="column" gap={20} width="100%">
             {content.message && (
               <CardPortableText
                 data={content.message as CardPortableTextBlock[]}

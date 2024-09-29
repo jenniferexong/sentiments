@@ -16,6 +16,7 @@ const config: Config = {
         inter: ['var(--font-inter)'],
         'ubunto-mono': ['var(--font-ubunto-mono)'],
         'reddit-mono': ['var(--font-reddit-mono)'],
+        sentiments: ['var(--font-sentiments)'],
       },
     },
   },

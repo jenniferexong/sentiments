@@ -17,9 +17,15 @@ export const CardContentPreviewField: React.FC = () => {
         padding={4}
       >
         <Text
-          style={{ color: (textColor as any)?.hex ?? DEFAULT_CARD_TEXT_COLOR }}
+          style={{
+            color: (textColor as any)?.hex ?? DEFAULT_CARD_TEXT_COLOR,
+            fontSize: 20,
+            fontFamily: `var(--font-sentiments)`,
+          }}
         >
-          This is some sample text.
+          <strong>This is some bold text.</strong>
+          <br />
+          This is some normal text.
         </Text>
       </Card>
     </Stack>
