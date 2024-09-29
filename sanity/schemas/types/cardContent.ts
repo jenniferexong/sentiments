@@ -1,3 +1,8 @@
+import {
+  CardContentLargeStyle,
+  CardContentNormalStyle,
+  CardContentStrong,
+} from '@/sanity/components/CardContentStyles';
 import { defineType, defineArrayMember, defineField } from 'sanity';
 
 export const cardContentType = defineType({
@@ -21,13 +26,25 @@ export const cardContentType = defineType({
         defineArrayMember({
           type: 'block',
           styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading', value: 'h4' },
+            {
+              title: 'Normal',
+              value: 'normal',
+              component: CardContentNormalStyle,
+            },
+            {
+              title: 'Large',
+              value: 'large',
+              component: CardContentLargeStyle,
+            },
           ],
           lists: [],
           marks: {
             decorators: [
-              { title: 'Strong', value: 'strong' },
+              {
+                title: 'Strong',
+                value: 'strong',
+                component: CardContentStrong,
+              },
               // { title: 'Emphasis', value: 'em' },
             ],
             annotations: [

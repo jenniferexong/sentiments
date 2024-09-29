@@ -1,5 +1,11 @@
 import { CardData, CardThemeData } from '@/data/types';
-import { Text, Root, Container } from '@react-three/uikit';
+import {
+  Text,
+  Root,
+  Container,
+  FontFamilyProvider,
+  DefaultProperties,
+} from '@react-three/uikit';
 import { CARD_HEIGHT, CARD_WIDTH } from './Card';
 import { MeshStandardMaterial } from 'three';
 import React, { useMemo } from 'react';
@@ -10,11 +16,13 @@ import {
   CardTextStyles,
   LinkMark,
 } from '@/components/card/types';
-import { DEFAULT_CARD_TEXT_COLOR } from '@/data/constants';
+import {
+  CARD_TEXT_SIZE,
+  CARD_TEXT_SIZE_HEADING,
+  CARD_TEXT_SIZE_TITLE,
+  DEFAULT_CARD_TEXT_COLOR,
+} from '@/data/constants';
 
-const CARD_TEXT_SIZE_TITLE = 16;
-const CARD_TEXT_SIZE_HEADING = 14;
-const CARD_TEXT_SIZE = 10;
 const CARD_TEXT_GAP_HEADING = CARD_TEXT_SIZE_HEADING / 4;
 const CARD_TEXT_GAP = CARD_TEXT_SIZE / 4;
 
@@ -36,26 +44,35 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
       backgroundOpacity={0}
       panelMaterialClass={MeshStandardMaterial}
     >
-      <Text
-        fontSize={CARD_TEXT_SIZE_TITLE}
-        color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+      <FontFamilyProvider
+        sentiments={{
+          normal: 'fonts/Sentiments-Regular.json',
+          bold: 'fonts/Sentiments-Bold.json',
+        }}
       >
-        {content.title}
-      </Text>
-      <Container flexDirection="column" gap={8} width="100%">
-        {content.message && (
-          <CardPortableText
-            data={content.message as CardPortableTextBlock[]}
-            theme={theme}
-          />
-        )}
-      </Container>
-      <Text
-        fontSize={CARD_TEXT_SIZE_TITLE}
-        color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
-      >
-        {content.conclusion}
-      </Text>
+        <DefaultProperties fontFamily="sentiments" lineHeight="80%">
+          <Text
+            fontSize={CARD_TEXT_SIZE_TITLE}
+            color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+          >
+            {content.title}
+          </Text>
+          <Container flexDirection="column" gap={20} width="100%">
+            {content.message && (
+              <CardPortableText
+                data={content.message as CardPortableTextBlock[]}
+                theme={theme}
+              />
+            )}
+          </Container>
+          <Text
+            fontSize={CARD_TEXT_SIZE_TITLE}
+            color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+          >
+            {content.conclusion}
+          </Text>
+        </DefaultProperties>
+      </FontFamilyProvider>
     </Root>
   );
 };
@@ -77,7 +94,9 @@ const CardPortableText: React.FC<CardPortableTextProps> = (props) => {
             flexDirection="row"
             flexWrap="wrap"
             width="100%"
-            gap={block.style === 'h4' ? CARD_TEXT_GAP_HEADING : CARD_TEXT_GAP}
+            gap={
+              block.style === 'large' ? CARD_TEXT_GAP_HEADING : CARD_TEXT_GAP
+            }
           >
             {block.children.map((child, index) => {
               return (
@@ -113,6 +132,9 @@ const CustomPortableTextInlineBlock: React.FC<
     throw new Error('Unsupported inline block:', data._type);
   }
 
+  const isBold = data.marks?.includes('strong');
+  const fontSize = style === 'large' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE;
+
   const link: LinkMark | undefined = markDefs?.find(
     (def) => def._type === 'link' && data.marks?.includes(def._key)
   );
@@ -132,12 +154,12 @@ const CustomPortableTextInlineBlock: React.FC<
   const textProps = useMemo(
     () => ({
       color: theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR,
-      fontSize: style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE,
-      fontWeight: data.marks?.includes('strong') ? 600 : 400,
-      borderBottomWidth: link ? 1 : 0,
+      fontSize: style === 'large' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE,
+      fontWeight: isBold ? 700 : 400,
+      borderBottomWidth: link ? (isBold ? 1 : 0.5) : 0,
       borderColor: link && (theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR),
     }),
-    [data.marks, link, style, theme.textColor.hex]
+    [isBold, link, style, theme.textColor.hex]
   );
 
   return data.text
@@ -158,14 +180,14 @@ const CustomPortableTextInlineBlock: React.FC<
             onClick={handleClick}
             hover={
               link && {
-                fontWeight: textProps.fontWeight + 100,
+                fontSize: fontSize * 1.1,
               }
             }
           >
             {word}
           </Text>
           {/* Ghost element to set correct size of container */}
-          <Text {...textProps} opacity={0}>
+          <Text {...textProps} opacity={0} borderOpacity={0}>
             {word}
           </Text>
         </Container>

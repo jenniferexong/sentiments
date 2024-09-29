@@ -1,7 +1,7 @@
 import { CARD_RATIO, DEFAULT_CARD_COLOR } from '@/data/constants';
 import { urlFor } from '@/sanity/lib/image';
 import { Card, Stack, Text } from '@sanity/ui';
-import { useFormValue } from 'sanity';
+import { isImage, useFormValue } from 'sanity';
 import Image from 'next/image';
 
 export const CardCoverPreviewField: React.FC = () => {
@@ -21,12 +21,9 @@ export const CardCoverPreviewField: React.FC = () => {
         }}
         padding={8}
       >
-        <Image
-          src={urlFor(image as any).url()}
-          alt=""
-          fill
-          objectFit="contain"
-        />
+        {isImage(image) && (
+          <Image src={urlFor(image).url()} alt="" fill objectFit="contain" />
+        )}
       </Card>
     </Stack>
   );
