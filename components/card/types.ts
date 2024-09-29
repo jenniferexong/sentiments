@@ -13,7 +13,7 @@ export type CardMarks = LinkMark;
 
 export type CardInlineBlocks = PortableTextSpan;
 
-export type CardTextStyles = 'normal' | 'h4';
+export type CardTextStyles = 'normal' | 'large';
 
 export type CardListStyles = never;
 

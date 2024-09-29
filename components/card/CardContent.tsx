@@ -94,7 +94,9 @@ const CardPortableText: React.FC<CardPortableTextProps> = (props) => {
             flexDirection="row"
             flexWrap="wrap"
             width="100%"
-            gap={block.style === 'h4' ? CARD_TEXT_GAP_HEADING : CARD_TEXT_GAP}
+            gap={
+              block.style === 'large' ? CARD_TEXT_GAP_HEADING : CARD_TEXT_GAP
+            }
           >
             {block.children.map((child, index) => {
               return (
@@ -131,7 +133,7 @@ const CustomPortableTextInlineBlock: React.FC<
   }
 
   const isBold = data.marks?.includes('strong');
-  const fontSize = style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE;
+  const fontSize = style === 'large' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE;
 
   const link: LinkMark | undefined = markDefs?.find(
     (def) => def._type === 'link' && data.marks?.includes(def._key)
@@ -152,7 +154,7 @@ const CustomPortableTextInlineBlock: React.FC<
   const textProps = useMemo(
     () => ({
       color: theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR,
-      fontSize: style === 'h4' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE,
+      fontSize: style === 'large' ? CARD_TEXT_SIZE_HEADING : CARD_TEXT_SIZE,
       fontWeight: isBold ? 700 : 400,
       borderBottomWidth: link ? (isBold ? 1 : 0.5) : 0,
       borderColor: link && (theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR),

@@ -1,5 +1,5 @@
 import {
-  CardContentHeadingStyle,
+  CardContentLargeStyle,
   CardContentNormalStyle,
   CardContentStrong,
 } from '@/sanity/components/CardContentStyles';
@@ -32,9 +32,9 @@ export const cardContentType = defineType({
               component: CardContentNormalStyle,
             },
             {
-              title: 'Heading',
-              value: 'h4',
-              component: CardContentHeadingStyle,
+              title: 'Large',
+              value: 'large',
+              component: CardContentLargeStyle,
             },
           ],
           lists: [],

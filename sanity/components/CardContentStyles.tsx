@@ -1,8 +1,8 @@
 import { CARD_TEXT_SIZE, CARD_TEXT_SIZE_HEADING } from '@/data/constants';
 import { PreviewProps } from 'sanity';
 
-export const CardContentHeadingStyle = (props: PreviewProps) => (
-  <h4
+export const CardContentLargeStyle = (props: PreviewProps) => (
+  <p
     style={{
       fontFamily: 'var(--font-sentiments)',
       fontSize: CARD_TEXT_SIZE_HEADING * 2,
@@ -10,7 +10,7 @@ export const CardContentHeadingStyle = (props: PreviewProps) => (
     }}
   >
     {props.children}
-  </h4>
+  </p>
 );
 
 export const CardContentNormalStyle = (props: PreviewProps) => (
