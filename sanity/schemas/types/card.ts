@@ -1,3 +1,4 @@
+import { CardCoverPreviewField } from '@/sanity/components/CardCoverPreviewField';
 import { CardUrlField } from '@/sanity/components/CardUrlField';
 import { BookIcon } from '@sanity/icons';
 import dayjs from 'dayjs';
@@ -14,8 +15,8 @@ export const cardType = defineType({
   type: 'document',
   icon: BookIcon,
   groups: [
-    { name: Group.Details, title: 'Details', default: true },
-    { name: Group.Content, title: 'Content' },
+    { name: Group.Details, title: 'Details', default: false },
+    { name: Group.Content, title: 'Content', default: true },
   ],
   fields: [
     defineField({
@@ -25,7 +26,7 @@ export const cardType = defineType({
       components: {
         field: CardUrlField,
       },
-      group: Group.Details,
+      group: [Group.Details, Group.Content],
     }),
     defineField({
       title: 'Title',
@@ -68,13 +69,23 @@ export const cardType = defineType({
       group: Group.Content,
     }),
     defineField({
-      title: 'Card Content',
-      name: 'content',
-      type: 'cardContent',
+      title: 'Content Preview',
+      name: 'coverPreview',
+      type: 'string',
+      components: {
+        field: CardCoverPreviewField,
+      },
       group: Group.Content,
     }),
     defineField({
-      title: 'Title',
+      title: 'Content',
+      name: 'content',
+      type: 'cardContent',
+      validation: (rule) => rule.required(),
+      group: Group.Content,
+    }),
+    defineField({
+      title: 'Theme',
       name: 'theme',
       type: 'cardTheme',
       group: Group.Content,

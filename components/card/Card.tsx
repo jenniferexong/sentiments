@@ -1,26 +1,94 @@
 'use client';
 
-import { CardAccessCode } from '@/components/card/CardAccessCode';
 import { CardData } from '@/data/types';
-import { useAdminStore } from '@/store/adminStore';
+import { Html, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { DoubleSide, Matrix4 } from 'three';
+import { CARD_RATIO, DEFAULT_CARD_COLOR } from '@/data/constants';
+import { urlFor } from '@/sanity/lib/image';
+import { CardContent } from '@/components/card/CardContent';
+import Image from 'next/image';
 
 type Props = CardData;
 
-export const Card: React.FC<Props> = (props) => {
-  const { _id, title, accessCode } = props;
+export const CARD_WIDTH = 3;
+export const CARD_HEIGHT = CARD_WIDTH * CARD_RATIO;
+const CARD_WIDTH_PX = 600;
+const CARD_HEIGHT_PX = CARD_WIDTH_PX * CARD_RATIO;
 
-  const hasAccessToCard = useAdminStore().cardAccess[_id];
+export const Card: React.FC<Props> = (props) => {
+  const { theme } = props;
 
   return (
-    <>
-      {!hasAccessToCard ? (
-        <CardAccessCode {...props} />
-      ) : (
-        <div className="flex h-screen flex-col items-center justify-center gap-4">
-          <h1>{title}</h1>
-          <h1>Code {accessCode}</h1>
-        </div>
-      )}
-    </>
+    <div className="fixed inset-0">
+      <Canvas shadows={false} gl={{ localClippingEnabled: true }}>
+        <color attach="background" args={['#151515']} />
+        <ambientLight intensity={2} />
+        <directionalLight
+          color="white"
+          position={[-2, 3, 1]}
+          intensity={2}
+          castShadow
+          shadow-mapSize-height={2048}
+          shadow-mapSize-width={2048}
+          shadow-normalBias={-0.01}
+        />
+        <PerspectiveCamera
+          position={[CARD_WIDTH * 1.2, 1, CARD_WIDTH * 2.4]}
+          makeDefault
+        />
+        {/* TODO: Make target the inside page on mobile */}
+        <OrbitControls target={[0, 0, 0]} />
+        {/* Outside page */}
+        <mesh
+          matrix={new Matrix4()
+            .makeRotationY(1)
+            .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))
+            .multiply(new Matrix4().makeRotationY(Math.PI))}
+          matrixAutoUpdate={false}
+          castShadow
+        >
+          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+          <meshStandardMaterial
+            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+            side={DoubleSide}
+          />
+          <Html
+            transform
+            occlude
+            scale={0.5}
+            distanceFactor={2}
+            position={[0, 0, 0.01]}
+            material={<meshStandardMaterial side={DoubleSide} opacity={0.1} />}
+          >
+            <div
+              className="pointer-events-none relative scale-[2] select-none"
+              style={{
+                width: `${CARD_WIDTH_PX}px`,
+                height: `${CARD_HEIGHT_PX}px`,
+              }}
+            >
+              {props.coverImage?.asset && (
+                <Image
+                  src={urlFor(props.coverImage.asset).url()}
+                  alt=""
+                  fill
+                  objectFit="contain"
+                />
+              )}
+            </div>
+          </Html>
+        </mesh>
+        {/* Inside page */}
+        <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+          <meshStandardMaterial
+            side={DoubleSide}
+            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+          />
+        </mesh>
+        <CardContent {...props} />
+      </Canvas>
+    </div>
   );
 };
