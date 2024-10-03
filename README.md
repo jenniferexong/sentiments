@@ -1,3 +1,20 @@
+# Sentiments
+
+> A work-in-progress web application to create and share personalized 3D greeting cards.
+
+**Card creation and content management with Sanity**
+![sanity](assets/images/card-creation.jpg)
+
+**3D card viewer**
+![rendering](assets/images/card-content.jpg)
+
+### Upcoming features
+- Card opening animation with confetti
+- Card cover image
+- Mobile support
+
+---
+
 # Using a custom font for UIKit:
 > For more details see https://pmndrs.github.io/uikit/docs/tutorials/custom-fonts.
 
