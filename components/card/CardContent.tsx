@@ -6,7 +6,6 @@ import {
   FontFamilyProvider,
   DefaultProperties,
 } from '@react-three/uikit';
-import { CARD_HEIGHT, CARD_WIDTH } from './Card';
 import { MeshStandardMaterial } from 'three';
 import React, { useMemo } from 'react';
 import {
@@ -17,9 +16,11 @@ import {
   LinkMark,
 } from '@/components/card/types';
 import {
+  CARD_HEIGHT,
   CARD_TEXT_SIZE,
   CARD_TEXT_SIZE_HEADING,
   CARD_TEXT_SIZE_TITLE,
+  CARD_WIDTH,
   DEFAULT_CARD_TEXT_COLOR,
 } from '@/data/constants';
 
