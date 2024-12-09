@@ -19,8 +19,6 @@ const CardScene: React.FC<Props> = (props) => {
     setCursorPosition(e.clientX, e.clientY);
   };
 
-  console.log('rerender');
-
   return (
     <div className="fixed inset-0">
       <Canvas

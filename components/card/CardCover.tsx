@@ -17,14 +17,20 @@ import {
   DEFAULT_CARD_COLOR,
 } from '@/data/constants';
 import { urlFor } from '@/sanity/lib/image';
-import { clamp } from '@/utils';
 import { Root, Image } from '@react-three/uikit';
 import { useCardStore } from '@/store/cardStore';
 import { useShallow } from 'zustand/react/shallow';
 import { CardAnimationState } from '@/components/card/types';
+import { useSpringValue } from '@react-spring/web';
 
-const CLOSED_ANGLE = Math.PI - 0.1;
-const OPEN_ANGLE = 1;
+// Fully open = 0
+// Open = 1
+// Closed = π - 0.1
+// Fully closed = π
+const TARGET_ANGLE: Record<CardAnimationState, number> = {
+  [CardAnimationState.Closing]: Math.PI - 0.1,
+  [CardAnimationState.Opening]: 1,
+};
 
 type Props = CardData;
 
@@ -36,7 +42,7 @@ const translationMatrix = new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0);
 // Flips the cover to show other side
 const rotationMatrix = new Matrix4().makeRotationY(Math.PI);
 const initialMatrix = new Matrix4()
-  .makeRotationY(CLOSED_ANGLE)
+  .makeRotationY(TARGET_ANGLE[CardAnimationState.Closing])
   .multiply(translationMatrix)
   .multiply(rotationMatrix);
 
@@ -52,19 +58,27 @@ export const CardCover: React.FC<Props> = (props) => {
     }))
   );
 
+  const springAngle = useSpringValue(TARGET_ANGLE[CardAnimationState.Closing], {
+    config: {
+      mass: 5,
+      friction: 50,
+      clamp: true,
+      precision: 0.001,
+    },
+  });
+
   const coverRef = useRef<Mesh | null>(null);
   const animationState = useRef<CardAnimationState>(CardAnimationState.Closing);
-  const currentAngle = useRef<number>(CLOSED_ANGLE);
 
   // Card opening animation
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const cover = coverRef.current;
 
     const isAnimating =
       (animationState.current === CardAnimationState.Closing &&
-        currentAngle.current < CLOSED_ANGLE) ||
+        springAngle.get() < TARGET_ANGLE[CardAnimationState.Closing]) ||
       (animationState.current === CardAnimationState.Opening &&
-        currentAngle.current > OPEN_ANGLE);
+        springAngle.get() > TARGET_ANGLE[CardAnimationState.Opening]);
 
     if (!cover || !isAnimating) {
       return;
@@ -73,19 +87,7 @@ export const CardCover: React.FC<Props> = (props) => {
     state.events.update?.();
     setCursorElement(CURSOR_ELEMENT[animationState.current]);
 
-    const angleChange = delta * 4 * animationState.current;
-
-    // Fully open = 0
-    // Open = 1
-    // Closed = π - 0.1
-    // Fully closed = π
-    currentAngle.current = clamp(
-      currentAngle.current + angleChange,
-      OPEN_ANGLE,
-      CLOSED_ANGLE
-    );
-
-    tempMatrix.makeRotationY(currentAngle.current);
+    tempMatrix.makeRotationY(springAngle.get());
 
     tempMatrix.multiply(translationMatrix);
     tempMatrix.multiply(rotationMatrix);
@@ -118,7 +120,7 @@ export const CardCover: React.FC<Props> = (props) => {
       onClick={(e) => {
         e.stopPropagation();
         animationState.current *= -1;
-        console.log('state', animationState.current);
+        springAngle.start(TARGET_ANGLE[animationState.current]);
       }}
       onPointerOver={onHover}
       onPointerOut={onBlur}
