@@ -1,27 +1,31 @@
 'use client';
 
 import { CardData } from '@/data/types';
-import { Html, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { DoubleSide, Matrix4 } from 'three';
-import { CARD_RATIO, DEFAULT_CARD_COLOR } from '@/data/constants';
-import { urlFor } from '@/sanity/lib/image';
+import { CARD_WIDTH } from '@/data/constants';
 import { CardContent } from '@/components/card/CardContent';
-import Image from 'next/image';
+import { CardCover } from '@/components/card/CardCover';
+import { MouseEventHandler } from 'react';
+import { Cursor } from '@/components/Cursor';
+import { useCardStore } from '@/store/cardStore';
 
 type Props = CardData;
 
-export const CARD_WIDTH = 3;
-export const CARD_HEIGHT = CARD_WIDTH * CARD_RATIO;
-const CARD_WIDTH_PX = 600;
-const CARD_HEIGHT_PX = CARD_WIDTH_PX * CARD_RATIO;
+const CardScene: React.FC<Props> = (props) => {
+  const setCursorPosition = useCardStore((state) => state.setCursorPosition);
 
-export const Card: React.FC<Props> = (props) => {
-  const { theme } = props;
+  const handleMouseMove: MouseEventHandler = (e) => {
+    setCursorPosition(e.clientX, e.clientY);
+  };
 
   return (
     <div className="fixed inset-0">
-      <Canvas shadows={false} gl={{ localClippingEnabled: true }}>
+      <Canvas
+        shadows={false}
+        gl={{ localClippingEnabled: true }}
+        onMouseMove={handleMouseMove}
+      >
         <color attach="background" args={['#151515']} />
         <ambientLight intensity={2} />
         <directionalLight
@@ -38,57 +42,30 @@ export const Card: React.FC<Props> = (props) => {
           makeDefault
         />
         {/* TODO: Make target the inside page on mobile */}
-        <OrbitControls target={[0, 0, 0]} />
-        {/* Outside page */}
-        <mesh
-          matrix={new Matrix4()
-            .makeRotationY(1)
-            .multiply(new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0))
-            .multiply(new Matrix4().makeRotationY(Math.PI))}
-          matrixAutoUpdate={false}
-          castShadow
-        >
-          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial
-            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-            side={DoubleSide}
-          />
-          <Html
-            transform
-            occlude
-            scale={0.5}
-            distanceFactor={2}
-            position={[0, 0, 0.01]}
-            material={<meshStandardMaterial side={DoubleSide} opacity={0.1} />}
-          >
-            <div
-              className="pointer-events-none relative scale-[2] select-none"
-              style={{
-                width: `${CARD_WIDTH_PX}px`,
-                height: `${CARD_HEIGHT_PX}px`,
-              }}
-            >
-              {props.coverImage?.asset && (
-                <Image
-                  src={urlFor(props.coverImage.asset).url()}
-                  alt=""
-                  fill
-                  objectFit="contain"
-                />
-              )}
-            </div>
-          </Html>
-        </mesh>
-        {/* Inside page */}
-        <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial
-            side={DoubleSide}
-            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-          />
-        </mesh>
+        <OrbitControls target={[CARD_WIDTH / 2, 0, 0]} />
+        <CardCover {...props} />
+        {/* <Confetti
+          isExploding
+          // areaHeight={CARD_HEIGHT}
+          amount={200}
+          rate={1}
+          areaWidth={CARD_WIDTH / 2}
+          anchorX={CARD_WIDTH / 2}
+          anchorY={0}
+          radius={10}
+          // fallingHeight={CARD_HEIGHT}
+        /> */}
         <CardContent {...props} />
       </Canvas>
     </div>
+  );
+};
+
+export const Card: React.FC<Props> = (props) => {
+  return (
+    <>
+      <CardScene {...props} />
+      <Cursor />
+    </>
   );
 };
