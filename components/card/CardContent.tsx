@@ -6,7 +6,7 @@ import {
   FontFamilyProvider,
   DefaultProperties,
 } from '@react-three/uikit';
-import { MeshStandardMaterial } from 'three';
+import { DoubleSide, MeshStandardMaterial } from 'three';
 import React, { useMemo } from 'react';
 import {
   CardInlineBlocks,
@@ -21,6 +21,7 @@ import {
   CARD_TEXT_SIZE_HEADING,
   CARD_TEXT_SIZE_TITLE,
   CARD_WIDTH,
+  DEFAULT_CARD_COLOR,
   DEFAULT_CARD_TEXT_COLOR,
 } from '@/data/constants';
 
@@ -33,48 +34,55 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
   const { content, theme } = props;
 
   return (
-    <Root
-      flexDirection="column"
-      justifyContent="space-between"
-      sizeX={CARD_WIDTH}
-      sizeY={CARD_HEIGHT}
-      anchorX="left"
-      paddingY={24}
-      paddingX={20}
-      transformTranslateZ={0.1}
-      backgroundOpacity={0}
-      panelMaterialClass={MeshStandardMaterial}
-    >
-      <FontFamilyProvider
-        sentiments={{
-          normal: 'fonts/Sentiments-Regular.json',
-          bold: 'fonts/Sentiments-Bold.json',
-        }}
+    <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+      <meshStandardMaterial
+        side={DoubleSide}
+        color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+      />
+      {/* Text */}
+      <Root
+        flexDirection="column"
+        justifyContent="space-between"
+        sizeX={CARD_WIDTH}
+        sizeY={CARD_HEIGHT}
+        paddingY={24}
+        paddingX={20}
+        transformTranslateZ={0.1}
+        backgroundOpacity={0}
+        panelMaterialClass={MeshStandardMaterial}
       >
-        <DefaultProperties fontFamily="sentiments" lineHeight="80%">
-          <Text
-            fontSize={CARD_TEXT_SIZE_TITLE}
-            color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
-          >
-            {content.title}
-          </Text>
-          <Container flexDirection="column" gap={20} width="100%">
-            {content.message && (
-              <CardPortableText
-                data={content.message as CardPortableTextBlock[]}
-                theme={theme}
-              />
-            )}
-          </Container>
-          <Text
-            fontSize={CARD_TEXT_SIZE_TITLE}
-            color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
-          >
-            {content.conclusion}
-          </Text>
-        </DefaultProperties>
-      </FontFamilyProvider>
-    </Root>
+        <FontFamilyProvider
+          sentiments={{
+            normal: 'fonts/Sentiments-Regular.json',
+            bold: 'fonts/Sentiments-Bold.json',
+          }}
+        >
+          <DefaultProperties fontFamily="sentiments" lineHeight="80%">
+            <Text
+              fontSize={CARD_TEXT_SIZE_TITLE}
+              color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+            >
+              {content.title}
+            </Text>
+            <Container flexDirection="column" gap={20} width="100%">
+              {content.message && (
+                <CardPortableText
+                  data={content.message as CardPortableTextBlock[]}
+                  theme={theme}
+                />
+              )}
+            </Container>
+            <Text
+              fontSize={CARD_TEXT_SIZE_TITLE}
+              color={theme.textColor.hex ?? DEFAULT_CARD_TEXT_COLOR}
+            >
+              {content.conclusion}
+            </Text>
+          </DefaultProperties>
+        </FontFamilyProvider>
+      </Root>
+    </mesh>
   );
 };
 

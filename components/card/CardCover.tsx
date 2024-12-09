@@ -10,15 +10,18 @@ import {
 } from 'three';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { CARD_HEIGHT, CARD_WIDTH, DEFAULT_CARD_COLOR } from '@/data/constants';
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  CURSOR_ELEMENT,
+  DEFAULT_CARD_COLOR,
+} from '@/data/constants';
 import { urlFor } from '@/sanity/lib/image';
 import { clamp } from '@/utils';
 import { Root, Image } from '@react-three/uikit';
-
-const enum AnimationState {
-  Closing = 1,
-  Opening = -1,
-}
+import { useCardStore } from '@/store/cardStore';
+import { useShallow } from 'zustand/react/shallow';
+import { CardAnimationState } from '@/components/card/types';
 
 const CLOSED_ANGLE = Math.PI - 0.1;
 const OPEN_ANGLE = 1;
@@ -42,23 +45,33 @@ const tempMatrix = new Matrix4();
 export const CardCover: React.FC<Props> = (props) => {
   const { theme } = props;
 
+  const { setShowCursor, setCursorElement } = useCardStore(
+    useShallow((state) => ({
+      setShowCursor: state.setShowCursor,
+      setCursorElement: state.setCursorElement,
+    }))
+  );
+
   const coverRef = useRef<Mesh | null>(null);
-  const animationState = useRef<AnimationState>(AnimationState.Closing);
+  const animationState = useRef<CardAnimationState>(CardAnimationState.Closing);
   const currentAngle = useRef<number>(CLOSED_ANGLE);
 
   // Card opening animation
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const cover = coverRef.current;
 
     const isAnimating =
-      (animationState.current === AnimationState.Closing &&
+      (animationState.current === CardAnimationState.Closing &&
         currentAngle.current < CLOSED_ANGLE) ||
-      (animationState.current === AnimationState.Opening &&
+      (animationState.current === CardAnimationState.Opening &&
         currentAngle.current > OPEN_ANGLE);
 
     if (!cover || !isAnimating) {
       return;
     }
+
+    state.events.update?.();
+    setCursorElement(CURSOR_ELEMENT[animationState.current]);
 
     const angleChange = delta * 4 * animationState.current;
 
@@ -87,11 +100,13 @@ export const CardCover: React.FC<Props> = (props) => {
   });
 
   const onHover = () => {
-    document.body.style.cursor = 'pointer';
+    document.body.style.cursor = 'none';
+    setShowCursor(true);
   };
 
   const onBlur = () => {
     document.body.style.cursor = 'auto';
+    setShowCursor(false);
   };
 
   return (
@@ -105,8 +120,8 @@ export const CardCover: React.FC<Props> = (props) => {
         animationState.current *= -1;
         console.log('state', animationState.current);
       }}
-      onPointerEnter={onHover}
-      onPointerLeave={onBlur}
+      onPointerOver={onHover}
+      onPointerOut={onBlur}
     >
       <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
       <meshStandardMaterial

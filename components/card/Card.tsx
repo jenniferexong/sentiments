@@ -3,19 +3,31 @@
 import { CardData } from '@/data/types';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { DoubleSide } from 'three';
-import { CARD_HEIGHT, CARD_WIDTH, DEFAULT_CARD_COLOR } from '@/data/constants';
+import { CARD_WIDTH } from '@/data/constants';
 import { CardContent } from '@/components/card/CardContent';
 import { CardCover } from '@/components/card/CardCover';
+import { MouseEventHandler } from 'react';
+import { Cursor } from '@/components/Cursor';
+import { useCardStore } from '@/store/cardStore';
 
 type Props = CardData;
 
-export const Card: React.FC<Props> = (props) => {
-  const { theme } = props;
+const CardScene: React.FC<Props> = (props) => {
+  const setCursorPosition = useCardStore((state) => state.setCursorPosition);
+
+  const handleMouseMove: MouseEventHandler = (e) => {
+    setCursorPosition(e.clientX, e.clientY);
+  };
+
+  console.log('rerender');
 
   return (
     <div className="fixed inset-0">
-      <Canvas shadows={false} gl={{ localClippingEnabled: true }}>
+      <Canvas
+        shadows={false}
+        gl={{ localClippingEnabled: true }}
+        onMouseMove={handleMouseMove}
+      >
         <color attach="background" args={['#151515']} />
         <ambientLight intensity={2} />
         <directionalLight
@@ -34,16 +46,28 @@ export const Card: React.FC<Props> = (props) => {
         {/* TODO: Make target the inside page on mobile */}
         <OrbitControls target={[CARD_WIDTH / 2, 0, 0]} />
         <CardCover {...props} />
-        {/* Inside page */}
-        <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-          <meshStandardMaterial
-            side={DoubleSide}
-            color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-          />
-        </mesh>
+        {/* <Confetti
+          isExploding
+          // areaHeight={CARD_HEIGHT}
+          amount={200}
+          rate={1}
+          areaWidth={CARD_WIDTH / 2}
+          anchorX={CARD_WIDTH / 2}
+          anchorY={0}
+          radius={10}
+          // fallingHeight={CARD_HEIGHT}
+        /> */}
         <CardContent {...props} />
       </Canvas>
     </div>
+  );
+};
+
+export const Card: React.FC<Props> = (props) => {
+  return (
+    <>
+      <CardScene {...props} />
+      <Cursor />
+    </>
   );
 };

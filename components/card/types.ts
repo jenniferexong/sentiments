@@ -23,3 +23,8 @@ export type CardPortableTextBlock = PortableTextBlock<
   CardTextStyles,
   CardListStyles
 >;
+
+export const enum CardAnimationState {
+  Closing = 1,
+  Opening = -1,
+}
