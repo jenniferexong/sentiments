@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@portabletext/types": "^2.0.13",
+    "@react-spring/web": "^9.7.5",
     "@react-three/drei": "^9.113.0",
     "@react-three/fiber": "^8.17.8",
     "@react-three/postprocessing": "^2.16.2",
@@ -39,9 +40,10 @@
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.5.2",
     "three": "^0.168.0",
-    "zustand": "^5.0.0-rc.2"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
