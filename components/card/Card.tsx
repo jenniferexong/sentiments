@@ -42,19 +42,8 @@ const CardScene: React.FC<Props> = (props) => {
           makeDefault
         />
         {/* TODO: Make target the inside page on mobile */}
-        <OrbitControls target={[CARD_WIDTH / 2, 0, 0]} />
+        <OrbitControls target={[CARD_WIDTH / 2, 0, 0]} maxDistance={8} />
         <CardCover {...props} />
-        {/* <Confetti
-          isExploding
-          // areaHeight={CARD_HEIGHT}
-          amount={200}
-          rate={1}
-          areaWidth={CARD_WIDTH / 2}
-          anchorX={CARD_WIDTH / 2}
-          anchorY={0}
-          radius={10}
-          // fallingHeight={CARD_HEIGHT}
-        /> */}
         <CardContent {...props} />
       </Canvas>
     </div>

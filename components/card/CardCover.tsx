@@ -22,6 +22,7 @@ import { useCardStore } from '@/store/cardStore';
 import { useShallow } from 'zustand/react/shallow';
 import { CardAnimationState } from '@/components/card/types';
 import { useSpringValue } from '@react-spring/web';
+import { Confetti } from '@/components/Confetti';
 
 // Fully open = 0
 // Open = 1
@@ -112,42 +113,53 @@ export const CardCover: React.FC<Props> = (props) => {
   };
 
   return (
-    <mesh
-      ref={coverRef}
-      matrix={initialMatrix}
-      matrixAutoUpdate={false}
-      castShadow
-      onClick={(e) => {
-        e.stopPropagation();
-        animationState.current *= -1;
-        springAngle.start(TARGET_ANGLE[animationState.current]);
-      }}
-      onPointerOver={onHover}
-      onPointerOut={onBlur}
-    >
-      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-      <meshStandardMaterial
-        color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-        side={DoubleSide}
+    <>
+      <Confetti
+        isExploding
+        amount={100}
+        areaWidth={CARD_WIDTH / 2}
+        anchorX={CARD_WIDTH / 2}
+        anchorY={CARD_HEIGHT / 4}
+        radius={10}
+        fallingSpeed={0.5}
       />
-      {props.coverImage?.asset && (
-        <Root
-          sizeX={CARD_WIDTH}
-          sizeY={CARD_HEIGHT}
-          transformTranslateZ={0.1}
-          backgroundOpacity={0}
-          panelMaterialClass={MeshStandardMaterial}
-          flexDirection="row"
-          alignItems="center"
-        >
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image
-            src={urlFor(props.coverImage.asset).url()}
-            width="100%"
-            height="auto"
-          />
-        </Root>
-      )}
-    </mesh>
+      <mesh
+        ref={coverRef}
+        matrix={initialMatrix}
+        matrixAutoUpdate={false}
+        castShadow
+        onClick={(e) => {
+          e.stopPropagation();
+          animationState.current *= -1;
+          springAngle.start(TARGET_ANGLE[animationState.current]);
+        }}
+        onPointerOver={onHover}
+        onPointerOut={onBlur}
+      >
+        <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+        <meshStandardMaterial
+          color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+          side={DoubleSide}
+        />
+        {props.coverImage?.asset && (
+          <Root
+            sizeX={CARD_WIDTH}
+            sizeY={CARD_HEIGHT}
+            transformTranslateZ={0.1}
+            backgroundOpacity={0}
+            panelMaterialClass={MeshStandardMaterial}
+            flexDirection="row"
+            alignItems="center"
+          >
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <Image
+              src={urlFor(props.coverImage.asset).url()}
+              width="100%"
+              height="auto"
+            />
+          </Root>
+        )}
+      </mesh>
+    </>
   );
 };
