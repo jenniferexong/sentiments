@@ -21,3 +21,12 @@ export const CURSOR_ELEMENT: Record<CardAnimationState, ReactNode> = {
   [CardAnimationState.Closing]: <Label icon={Open} label="Open" />,
   [CardAnimationState.Opening]: <Label icon={Close} label="Close" />,
 };
+
+// Fully open = 0
+// Open = 1
+// Closed = π - 0.1
+// Fully closed = π
+export const CARD_TARGET_ANGLE: Record<CardAnimationState, number> = {
+  [CardAnimationState.Closing]: Math.PI - 0.1,
+  [CardAnimationState.Opening]: 1,
+};

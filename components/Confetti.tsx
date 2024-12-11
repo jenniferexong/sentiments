@@ -91,6 +91,7 @@ export const Confetti: React.FC<Props> = ({
   rate = 3, // be careful with this number. Can freze your app
   radius = 15,
   areaWidth = 3,
+  areaHeight = 3,
   anchorX = 0,
   anchorY = 0,
   fallingHeight = 10,
@@ -115,8 +116,7 @@ export const Confetti: React.FC<Props> = ({
   function explode() {
     const position = new Vector3(
       anchorX + (-(areaWidth / 2) + areaWidth * Math.random()),
-      anchorY,
-      // CARD_HEIGHT / 2,
+      anchorY + (-(areaHeight / 2) + areaHeight * Math.random()),
       // fallingHeight + areaHeight - fallingSpeed,
       0
       // -(areaWidth / 2) + areaWidth * Math.random()
