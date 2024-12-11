@@ -3,7 +3,9 @@ import { groq } from 'next-sanity';
 
 export const cardQuery = groq`
   *[_type in ["card"] && _id == $cardId][0]{
-    _id, title, recipient, accessCode, date, coverImage,
+    _id, title, accessCode, date, coverImage,
+    "recipient": recipient->name,
+    "category": category->name,
     "content": content{
       title, message, conclusion
     },

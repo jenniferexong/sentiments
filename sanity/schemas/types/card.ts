@@ -36,9 +36,20 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      title: 'Category',
+      name: 'category',
+      type: 'reference',
+      weak: false,
+      to: [{ type: 'cardCategory' }],
+      validation: (rule) => rule.required(),
+      group: Group.Details,
+    }),
+    defineField({
       title: 'Recipient',
       name: 'recipient',
-      type: 'string',
+      type: 'reference',
+      weak: false,
+      to: [{ type: 'recipient' }],
       validation: (rule) => rule.required(),
       group: Group.Details,
     }),
@@ -94,16 +105,17 @@ export const cardType = defineType({
   preview: {
     select: {
       title: 'title',
-      recipient: 'recipient',
+      recipient: 'recipient.name',
       date: 'date',
       coverImage: 'coverImage',
+      category: 'category.name',
     },
     prepare(selection) {
-      const { title, recipient, date, coverImage } = selection;
-      const formattedDate = dayjs(date).format('ddd D MMM YYYY');
+      const { title, category, recipient, date, coverImage } = selection;
+      const formattedDate = dayjs(date).format('D MMM YYYY');
       return {
         title,
-        subtitle: `to ${recipient} - ${formattedDate}`,
+        subtitle: `${recipient} | ${category} | ${formattedDate}`,
         media: coverImage,
       };
     },
