@@ -73,6 +73,21 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      title: 'Size',
+      name: 'size',
+      type: 'number',
+      initialValue: 1,
+      options: {
+        list: [
+          { title: 'Square', value: 1 },
+          { title: 'Portrait', value: 1.414 },
+        ],
+        layout: 'radio',
+      },
+      validation: (rule) => rule.required(),
+      group: Group.Content,
+    }),
+    defineField({
       title: 'Cover Image',
       name: 'coverImage',
       type: 'image',

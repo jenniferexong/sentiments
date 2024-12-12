@@ -1,4 +1,4 @@
-import { CARD_RATIO, DEFAULT_CARD_COLOR } from '@/data/constants';
+import { DEFAULT_CARD_COLOR } from '@/data/constants';
 import { urlFor } from '@/sanity/lib/image';
 import { Card, Stack, Text } from '@sanity/ui';
 import { isImage, useFormValue } from 'sanity';
@@ -6,6 +6,7 @@ import Image from 'next/image';
 
 export const CardCoverPreviewField: React.FC = () => {
   const image = useFormValue(['coverImage']);
+  const size = useFormValue(['size']);
   const cardColor = useFormValue(['theme', 'cardColor']);
 
   return (
@@ -16,7 +17,7 @@ export const CardCoverPreviewField: React.FC = () => {
           backgroundColor: (cardColor as any)?.hex ?? DEFAULT_CARD_COLOR,
           position: 'relative',
           width: '100%',
-          aspectRatio: 1 / CARD_RATIO,
+          aspectRatio: 1 / Number(size as any),
           height: 'auto',
         }}
         padding={8}

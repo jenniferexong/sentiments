@@ -8,12 +8,10 @@ import {
   Quaternion,
   Vector3,
 } from 'three';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import {
-  CARD_HEIGHT,
   CARD_TARGET_ANGLE,
-  CARD_WIDTH,
   CURSOR_ELEMENT,
   DEFAULT_CARD_COLOR,
 } from '@/data/constants';
@@ -32,13 +30,8 @@ const position = new Vector3();
 const rotation = new Quaternion();
 const scale = new Vector3();
 
-const translationMatrix = new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0);
 // Flips the cover to show other side
 const rotationMatrix = new Matrix4().makeRotationY(Math.PI);
-const initialMatrix = new Matrix4()
-  .makeRotationY(CARD_TARGET_ANGLE[CardAnimationState.Closing])
-  .multiply(translationMatrix)
-  .multiply(rotationMatrix);
 
 const tempMatrix = new Matrix4();
 
@@ -48,6 +41,7 @@ export const CardCover: React.FC<CardData> = (props) => {
   const {
     theme,
     effects: { confetti },
+    size,
   } = props;
 
   const showConfetti = useRef<boolean>(confetti.enable);
@@ -59,6 +53,17 @@ export const CardCover: React.FC<CardData> = (props) => {
       setCursorElement: state.setCursorElement,
     }))
   );
+
+  const translationMatrix = useMemo(() => {
+    return new Matrix4().makeTranslation(-size.width / 2, 0, 0);
+  }, [size.width]);
+
+  const initialMatrix = useMemo(() => {
+    return new Matrix4()
+      .makeRotationY(CARD_TARGET_ANGLE[CardAnimationState.Closing])
+      .multiply(translationMatrix)
+      .multiply(rotationMatrix);
+  }, [translationMatrix]);
 
   const springAngle = useSpringValue(
     CARD_TARGET_ANGLE[CardAnimationState.Closing],
@@ -137,6 +142,7 @@ export const CardCover: React.FC<CardData> = (props) => {
   return (
     <>
       <CardConfetti
+        size={props.size}
         colors={confetti.colors
           .map((color) => color.hex)
           .filter((color) => color !== undefined)}
@@ -155,15 +161,15 @@ export const CardCover: React.FC<CardData> = (props) => {
         onPointerOver={onHover}
         onPointerOut={onBlur}
       >
-        <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+        <planeGeometry args={[size.width, size.height]} />
         <meshStandardMaterial
           color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
           side={DoubleSide}
         />
         {props.coverImage?.asset && (
           <Root
-            sizeX={CARD_WIDTH}
-            sizeY={CARD_HEIGHT}
+            sizeX={size.width}
+            sizeY={size.height}
             transformTranslateZ={0.1}
             backgroundOpacity={0}
             panelMaterialClass={MeshStandardMaterial}
