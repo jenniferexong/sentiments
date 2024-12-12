@@ -3,7 +3,9 @@ import { Confetti } from '@/components/Confetti';
 import { CARD_HEIGHT, CARD_WIDTH } from '@/data/constants';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-type Props = {};
+type Props = {
+  colors: string[];
+};
 
 export const CardConfetti = forwardRef<CardConfettiHandles, Props>(
   (props, ref) => {
@@ -26,6 +28,7 @@ export const CardConfetti = forwardRef<CardConfettiHandles, Props>(
         anchorY={0}
         radius={7}
         fallingSpeed={1.4}
+        colors={props.colors}
       />
     );
   }

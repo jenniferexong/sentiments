@@ -45,9 +45,12 @@ const tempMatrix = new Matrix4();
 let confettiTimer: any;
 
 export const CardCover: React.FC<CardData> = (props) => {
-  const { theme } = props;
+  const {
+    theme,
+    effects: { confetti },
+  } = props;
 
-  const showConfetti = useRef<boolean>(true);
+  const showConfetti = useRef<boolean>(confetti.enable);
   const confettiHandles = useRef<CardConfettiHandles | null>(null);
 
   const { setShowCursor, setCursorElement } = useCardStore(
@@ -133,7 +136,12 @@ export const CardCover: React.FC<CardData> = (props) => {
 
   return (
     <>
-      <CardConfetti ref={confettiHandles} />
+      <CardConfetti
+        colors={confetti.colors
+          .map((color) => color.hex)
+          .filter((color) => color !== undefined)}
+        ref={confettiHandles}
+      />
       <mesh
         ref={coverRef}
         matrix={initialMatrix}

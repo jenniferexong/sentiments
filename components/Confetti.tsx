@@ -18,7 +18,7 @@ type Props = {
   fallingSpeed?: number;
   anchorX?: number;
   anchorY?: number;
-  colors?: number[];
+  colors?: string[];
 };
 
 const CONFETTI_GEOMETRY: THREE.PlaneGeometry = new THREE.PlaneGeometry(
@@ -33,8 +33,8 @@ class Confetto extends Mesh {
   destination: Vector3;
   rotateSpeed: Vector3;
 
-  constructor(color: number, destination: Vector3) {
-    const material = new THREE.MeshStandardMaterial({
+  constructor(color: string, destination: Vector3) {
+    const material = new THREE.MeshBasicMaterial({
       color: color,
       side: THREE.DoubleSide,
     });
@@ -81,7 +81,7 @@ class Boom extends Object3D {
  * @param {Number | undefined} options.areaHeight The area height for explosion.
  * @param {Number | undefined} options.fallingHeight Height for the particles to fall from
  * @param {Number | undefined} options.fallingSpeed The speed of particles
- * @param {(Number)[] | undefined} options.colors Array of Hex color codes for particles. Example: [0x0000ff, 0xff0000, 0xffff00]
+ * @param {(string)[] | undefined} options.colors Array of Hex color codes for particles. Example: ["#0000ff", "#ff0000", "#ffff00"]
  *
  */
 
@@ -96,7 +96,7 @@ export const Confetti: React.FC<Props> = ({
   anchorY = 0,
   fallingHeight = 10,
   fallingSpeed = 8,
-  colors = [0x0000ff, 0xff0000, 0xffff00],
+  colors = ['#0000ff', '#ff0000', '#ffff00'],
 }) => {
   const groupRef = useRef<Mesh | null>(null);
   const [booms, setBooms] = useState<Boom[]>([]);
