@@ -28,3 +28,7 @@ export const enum CardAnimationState {
   Closing = 1,
   Opening = -1,
 }
+
+export type CardConfettiHandles = {
+  setExploding: (exploding: boolean) => void;
+};

@@ -16,4 +16,7 @@ export const structure: StructureResolver = (S) =>
             .documentId('settings')
         ),
       S.documentTypeListItem('card').title('Cards'),
+      S.divider(),
+      S.documentTypeListItem('recipient').title('Recipients'),
+      S.documentTypeListItem('cardCategory').title('Categories'),
     ]);

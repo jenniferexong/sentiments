@@ -8,10 +8,11 @@ import {
   Quaternion,
   Vector3,
 } from 'three';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import {
   CARD_HEIGHT,
+  CARD_TARGET_ANGLE,
   CARD_WIDTH,
   CURSOR_ELEMENT,
   DEFAULT_CARD_COLOR,
@@ -20,19 +21,12 @@ import { urlFor } from '@/sanity/lib/image';
 import { Root, Image } from '@react-three/uikit';
 import { useCardStore } from '@/store/cardStore';
 import { useShallow } from 'zustand/react/shallow';
-import { CardAnimationState } from '@/components/card/types';
+import {
+  CardAnimationState,
+  CardConfettiHandles,
+} from '@/components/card/types';
 import { useSpringValue } from '@react-spring/web';
-
-// Fully open = 0
-// Open = 1
-// Closed = π - 0.1
-// Fully closed = π
-const TARGET_ANGLE: Record<CardAnimationState, number> = {
-  [CardAnimationState.Closing]: Math.PI - 0.1,
-  [CardAnimationState.Opening]: 1,
-};
-
-type Props = CardData;
+import { CardConfetti } from '@/components/card/CardConfetti';
 
 const position = new Vector3();
 const rotation = new Quaternion();
@@ -42,14 +36,22 @@ const translationMatrix = new Matrix4().makeTranslation(-CARD_WIDTH / 2, 0, 0);
 // Flips the cover to show other side
 const rotationMatrix = new Matrix4().makeRotationY(Math.PI);
 const initialMatrix = new Matrix4()
-  .makeRotationY(TARGET_ANGLE[CardAnimationState.Closing])
+  .makeRotationY(CARD_TARGET_ANGLE[CardAnimationState.Closing])
   .multiply(translationMatrix)
   .multiply(rotationMatrix);
 
 const tempMatrix = new Matrix4();
 
-export const CardCover: React.FC<Props> = (props) => {
-  const { theme } = props;
+let confettiTimer: any;
+
+export const CardCover: React.FC<CardData> = (props) => {
+  const {
+    theme,
+    effects: { confetti },
+  } = props;
+
+  const showConfetti = useRef<boolean>(confetti.enable);
+  const confettiHandles = useRef<CardConfettiHandles | null>(null);
 
   const { setShowCursor, setCursorElement } = useCardStore(
     useShallow((state) => ({
@@ -58,14 +60,17 @@ export const CardCover: React.FC<Props> = (props) => {
     }))
   );
 
-  const springAngle = useSpringValue(TARGET_ANGLE[CardAnimationState.Closing], {
-    config: {
-      mass: 5,
-      friction: 50,
-      clamp: true,
-      precision: 0.001,
-    },
-  });
+  const springAngle = useSpringValue(
+    CARD_TARGET_ANGLE[CardAnimationState.Closing],
+    {
+      config: {
+        mass: 50,
+        friction: 130,
+        clamp: true,
+        precision: 0.001,
+      },
+    }
+  );
 
   const coverRef = useRef<Mesh | null>(null);
   const animationState = useRef<CardAnimationState>(CardAnimationState.Closing);
@@ -76,12 +81,26 @@ export const CardCover: React.FC<Props> = (props) => {
 
     const isAnimating =
       (animationState.current === CardAnimationState.Closing &&
-        springAngle.get() < TARGET_ANGLE[CardAnimationState.Closing]) ||
+        springAngle.get() < CARD_TARGET_ANGLE[CardAnimationState.Closing]) ||
       (animationState.current === CardAnimationState.Opening &&
-        springAngle.get() > TARGET_ANGLE[CardAnimationState.Opening]);
+        springAngle.get() > CARD_TARGET_ANGLE[CardAnimationState.Opening]);
 
     if (!cover || !isAnimating) {
       return;
+    }
+
+    // Show confetti once
+    if (
+      showConfetti.current &&
+      animationState.current === CardAnimationState.Opening &&
+      springAngle.get() < 2.9
+    ) {
+      confettiHandles.current?.setExploding(true),
+        (confettiTimer = setTimeout(
+          () => confettiHandles.current?.setExploding(false),
+          500
+        ));
+      showConfetti.current = false;
     }
 
     state.events.update?.();
@@ -101,6 +120,10 @@ export const CardCover: React.FC<Props> = (props) => {
     cover.updateMatrix();
   });
 
+  useEffect(() => {
+    return clearTimeout(confettiTimer);
+  }, []);
+
   const onHover = () => {
     document.body.style.cursor = 'none';
     setShowCursor(true);
@@ -112,42 +135,50 @@ export const CardCover: React.FC<Props> = (props) => {
   };
 
   return (
-    <mesh
-      ref={coverRef}
-      matrix={initialMatrix}
-      matrixAutoUpdate={false}
-      castShadow
-      onClick={(e) => {
-        e.stopPropagation();
-        animationState.current *= -1;
-        springAngle.start(TARGET_ANGLE[animationState.current]);
-      }}
-      onPointerOver={onHover}
-      onPointerOut={onBlur}
-    >
-      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-      <meshStandardMaterial
-        color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
-        side={DoubleSide}
+    <>
+      <CardConfetti
+        colors={confetti.colors
+          .map((color) => color.hex)
+          .filter((color) => color !== undefined)}
+        ref={confettiHandles}
       />
-      {props.coverImage?.asset && (
-        <Root
-          sizeX={CARD_WIDTH}
-          sizeY={CARD_HEIGHT}
-          transformTranslateZ={0.1}
-          backgroundOpacity={0}
-          panelMaterialClass={MeshStandardMaterial}
-          flexDirection="row"
-          alignItems="center"
-        >
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image
-            src={urlFor(props.coverImage.asset).url()}
-            width="100%"
-            height="auto"
-          />
-        </Root>
-      )}
-    </mesh>
+      <mesh
+        ref={coverRef}
+        matrix={initialMatrix}
+        matrixAutoUpdate={false}
+        castShadow
+        onClick={(e) => {
+          e.stopPropagation();
+          animationState.current *= -1;
+          springAngle.start(CARD_TARGET_ANGLE[animationState.current]);
+        }}
+        onPointerOver={onHover}
+        onPointerOut={onBlur}
+      >
+        <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+        <meshStandardMaterial
+          color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
+          side={DoubleSide}
+        />
+        {props.coverImage?.asset && (
+          <Root
+            sizeX={CARD_WIDTH}
+            sizeY={CARD_HEIGHT}
+            transformTranslateZ={0.1}
+            backgroundOpacity={0}
+            panelMaterialClass={MeshStandardMaterial}
+            flexDirection="row"
+            alignItems="center"
+          >
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <Image
+              src={urlFor(props.coverImage.asset).url()}
+              width="100%"
+              height="auto"
+            />
+          </Root>
+        )}
+      </mesh>
+    </>
   );
 };

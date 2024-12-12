@@ -7,6 +7,7 @@ import { defineField, defineType } from 'sanity';
 const enum Group {
   Details = 'details',
   Content = 'content',
+  Effects = 'effects',
 }
 
 export const cardType = defineType({
@@ -17,6 +18,7 @@ export const cardType = defineType({
   groups: [
     { name: Group.Details, title: 'Details', default: false },
     { name: Group.Content, title: 'Content', default: true },
+    { name: Group.Effects, title: 'Effects', default: false },
   ],
   fields: [
     defineField({
@@ -26,7 +28,7 @@ export const cardType = defineType({
       components: {
         field: CardUrlField,
       },
-      group: [Group.Details, Group.Content],
+      group: [Group.Details, Group.Content, Group.Effects],
     }),
     defineField({
       title: 'Title',
@@ -36,9 +38,20 @@ export const cardType = defineType({
       group: Group.Details,
     }),
     defineField({
+      title: 'Category',
+      name: 'category',
+      type: 'reference',
+      weak: false,
+      to: [{ type: 'cardCategory' }],
+      validation: (rule) => rule.required(),
+      group: Group.Details,
+    }),
+    defineField({
       title: 'Recipient',
       name: 'recipient',
-      type: 'string',
+      type: 'reference',
+      weak: false,
+      to: [{ type: 'recipient' }],
       validation: (rule) => rule.required(),
       group: Group.Details,
     }),
@@ -90,20 +103,28 @@ export const cardType = defineType({
       type: 'cardTheme',
       group: Group.Content,
     }),
+    defineField({
+      title: 'Effects',
+      name: 'effects',
+      type: 'cardEffects',
+      validation: (rule) => rule.required(),
+      group: Group.Effects,
+    }),
   ],
   preview: {
     select: {
       title: 'title',
-      recipient: 'recipient',
+      recipient: 'recipient.name',
       date: 'date',
       coverImage: 'coverImage',
+      category: 'category.name',
     },
     prepare(selection) {
-      const { title, recipient, date, coverImage } = selection;
-      const formattedDate = dayjs(date).format('ddd D MMM YYYY');
+      const { title, category, recipient, date, coverImage } = selection;
+      const formattedDate = dayjs(date).format('D MMM YYYY');
       return {
         title,
-        subtitle: `to ${recipient} - ${formattedDate}`,
+        subtitle: `${recipient} | ${category} | ${formattedDate}`,
         media: coverImage,
       };
     },
