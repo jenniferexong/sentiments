@@ -7,6 +7,8 @@ import { settingsType } from '@/sanity/schemas/types/settings';
 import { maskedStringType } from '@/sanity/schemas/types/maskedString';
 import { recipientType } from '@/sanity/schemas/types/recipient';
 import { cardCategoryType } from '@/sanity/schemas/types/cardCategory';
+import { confettiEffectType } from '@/sanity/schemas/types/confettiEffect';
+import { cardEffectsType } from '@/sanity/schemas/types/cardEffects';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -14,8 +16,10 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     cardType,
     cardCategoryType,
     cardContentType,
+    cardEffectsType,
     cardThemeType,
     maskedStringType,
     recipientType,
+    confettiEffectType,
   ],
 };

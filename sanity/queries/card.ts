@@ -23,6 +23,16 @@ export const cardQuery = groq`
       "textColor": {
         "hex": "${DEFAULT_CARD_TEXT_COLOR}"
       },
-    })
+    }),
+    "effects": effects{
+      "confetti": confetti{
+        enable,
+        "colors": coalesce(colors, [
+          {
+            "hex": "${DEFAULT_CARD_COLOR}"
+          }
+        ])
+      }
+    }
   }
 `;

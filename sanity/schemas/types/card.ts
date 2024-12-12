@@ -7,6 +7,7 @@ import { defineField, defineType } from 'sanity';
 const enum Group {
   Details = 'details',
   Content = 'content',
+  Effects = 'effects',
 }
 
 export const cardType = defineType({
@@ -17,6 +18,7 @@ export const cardType = defineType({
   groups: [
     { name: Group.Details, title: 'Details', default: false },
     { name: Group.Content, title: 'Content', default: true },
+    { name: Group.Effects, title: 'Effects', default: false },
   ],
   fields: [
     defineField({
@@ -26,7 +28,7 @@ export const cardType = defineType({
       components: {
         field: CardUrlField,
       },
-      group: [Group.Details, Group.Content],
+      group: [Group.Details, Group.Content, Group.Effects],
     }),
     defineField({
       title: 'Title',
@@ -100,6 +102,13 @@ export const cardType = defineType({
       name: 'theme',
       type: 'cardTheme',
       group: Group.Content,
+    }),
+    defineField({
+      title: 'Effects',
+      name: 'effects',
+      type: 'cardEffects',
+      validation: (rule) => rule.required(),
+      group: Group.Effects,
     }),
   ],
   preview: {
