@@ -16,11 +16,9 @@ import {
   LinkMark,
 } from '@/components/card/types';
 import {
-  CARD_HEIGHT,
   CARD_TEXT_SIZE,
   CARD_TEXT_SIZE_HEADING,
   CARD_TEXT_SIZE_TITLE,
-  CARD_WIDTH,
   DEFAULT_CARD_COLOR,
   DEFAULT_CARD_TEXT_COLOR,
 } from '@/data/constants';
@@ -28,14 +26,14 @@ import {
 const CARD_TEXT_GAP_HEADING = CARD_TEXT_SIZE_HEADING / 4;
 const CARD_TEXT_GAP = CARD_TEXT_SIZE / 4;
 
-type CardContentProps = Pick<CardData, 'content' | 'theme'>;
+type CardContentProps = Pick<CardData, 'content' | 'theme' | 'size'>;
 
 export const CardContent: React.FC<CardContentProps> = (props) => {
-  const { content, theme } = props;
+  const { content, theme, size } = props;
 
   return (
-    <mesh position={[CARD_WIDTH / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+    <mesh position={[size.width / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[size.width, size.height]} />
       <meshStandardMaterial
         side={DoubleSide}
         color={theme.cardColor.hex ?? DEFAULT_CARD_COLOR}
@@ -44,8 +42,8 @@ export const CardContent: React.FC<CardContentProps> = (props) => {
       <Root
         flexDirection="column"
         justifyContent="space-between"
-        sizeX={CARD_WIDTH}
-        sizeY={CARD_HEIGHT}
+        sizeX={size.width}
+        sizeY={size.height}
         paddingY={24}
         paddingX={20}
         transformTranslateZ={0.1}

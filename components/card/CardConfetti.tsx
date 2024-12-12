@@ -1,14 +1,16 @@
 import { CardConfettiHandles } from '@/components/card/types';
 import { Confetti } from '@/components/Confetti';
-import { CARD_HEIGHT, CARD_WIDTH } from '@/data/constants';
+import { CardData } from '@/data/types';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-type Props = {
+type Props = Pick<CardData, 'size'> & {
   colors: string[];
 };
 
 export const CardConfetti = forwardRef<CardConfettiHandles, Props>(
   (props, ref) => {
+    const { width, height } = props.size;
+
     const [show, setShow] = useState(false);
 
     useImperativeHandle(ref, () => {
@@ -22,9 +24,9 @@ export const CardConfetti = forwardRef<CardConfettiHandles, Props>(
         isExploding={show}
         amount={150}
         rate={20}
-        areaWidth={CARD_WIDTH / 4}
-        areaHeight={CARD_HEIGHT / 4}
-        anchorX={CARD_WIDTH / 2}
+        areaWidth={width / 4}
+        areaHeight={height / 4}
+        anchorX={width / 2}
         anchorY={0}
         radius={7}
         fallingSpeed={1.4}
