@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-charcoal;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

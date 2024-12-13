@@ -9,12 +9,12 @@ type Props = {
 
 export const Admin: React.FC<Props> = (props) => {
   const { accessCode } = props;
-  const { setAccessCode } = useAdminStore();
+  const { initialize, setAccessCode } = useAdminStore();
 
   useLayoutEffect(() => {
-    console.log('setting code', accessCode);
+    initialize();
     setAccessCode(accessCode);
-  }, [accessCode, setAccessCode]);
+  }, [accessCode, initialize, setAccessCode]);
 
   return null;
 };

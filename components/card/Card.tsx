@@ -5,9 +5,10 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { CardContent } from '@/components/card/CardContent';
 import { CardCover } from '@/components/card/CardCover';
-import { MouseEventHandler } from 'react';
+import { MouseEventHandler, Suspense } from 'react';
 import { Cursor } from '@/components/Cursor';
 import { useCardStore } from '@/store/cardStore';
+import { Loading } from '@/components/Loading';
 
 type Props = CardData;
 
@@ -52,9 +53,9 @@ const CardScene: React.FC<Props> = (props) => {
 
 export const Card: React.FC<Props> = (props) => {
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       <CardScene {...props} />
       <Cursor />
-    </>
+    </Suspense>
   );
 };
