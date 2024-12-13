@@ -40,7 +40,10 @@ export const Cursor: React.FC = () => {
   });
 
   return (
-    <animated.div className="pointer-events-none fixed" style={styleProps}>
+    <animated.div
+      className="pointer-events-none fixed hidden sm:block"
+      style={styleProps}
+    >
       <div className="absolute -translate-x-1/2 -translate-y-1/2">
         {element}
       </div>
