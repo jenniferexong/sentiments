@@ -23,7 +23,7 @@ const CardScene: React.FC<Props> = (props) => {
   };
 
   const isMobile = !window.matchMedia('(min-width: 640px)').matches;
-  const maxDistance = isMobile ? 9 : 8;
+  const maxDistance = isMobile ? 8 : 7;
 
   return (
     <div className="fixed inset-0">
