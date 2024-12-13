@@ -1,5 +1,6 @@
 import { CardPage } from '@/components/page/CardPage';
 import { getCardData } from '@/sanity/api/card';
+import { urlFor } from '@/sanity/lib/image';
 import { Metadata } from 'next';
 
 type Props = {
@@ -19,8 +20,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     };
   }
 
+  const images = data.coverImage?.asset
+    ? [urlFor(data.coverImage.asset).url()]
+    : undefined;
+
   return {
     title: data.title,
+    openGraph: {
+      title: data.title,
+      images,
+    },
   };
 }
 
