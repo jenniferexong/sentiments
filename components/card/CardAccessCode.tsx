@@ -50,7 +50,7 @@ export const CardAccessCode: React.FC<Props> = (props) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-charcoal text-white">
       <form
-        className="flex flex-col gap-4 sm:flex-row sm:items-center"
+        className="flex w-full flex-col gap-4 px-8 sm:flex-row sm:items-center sm:justify-center"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="relative">
@@ -65,12 +65,12 @@ export const CardAccessCode: React.FC<Props> = (props) => {
               required: 'Code is required',
             })}
             autoComplete="off"
-            className="flex h-16 items-center rounded border border-white/50 bg-transparent px-4 font-ubunto-mono text-xl tracking-[0.5em] outline-none sm:w-[400px] sm:text-2xl"
+            className="flex h-16 w-full items-center rounded border border-white/50 bg-transparent px-4 font-ubunto-mono text-xl tracking-[0.5em] outline-none sm:w-[400px] sm:text-2xl"
           />
           <p className={errorClassName}>{errors.accessCode?.message}</p>
         </div>
         <button
-          className="flex h-16 w-fit items-center rounded border border-white/50 bg-white/5 px-6 font-reddit-mono text-2xl uppercase tracking-wide outline-none transition-colors hover:bg-transparent"
+          className="mt-6 flex h-16 w-fit items-center rounded border border-white/50 bg-white/5 px-6 font-reddit-mono text-2xl uppercase tracking-wide outline-none transition-colors hover:bg-transparent sm:mt-0"
           type="submit"
         >
           Enter
