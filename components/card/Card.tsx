@@ -5,7 +5,7 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { CardContent } from '@/components/card/CardContent';
 import { CardCover } from '@/components/card/CardCover';
-import { MouseEventHandler, Suspense } from 'react';
+import { MouseEventHandler, Suspense, useState } from 'react';
 import { Cursor } from '@/components/Cursor';
 import { useCardStore } from '@/store/cardStore';
 import { Loading } from '@/components/Loading';
@@ -57,20 +57,28 @@ const CardScene: React.FC<Props> = (props) => {
 };
 
 export const Card: React.FC<Props> = (props) => {
+  const [loaded, setLoaded] = useState(false);
+
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading onLoaded={() => setLoaded(true)} />}>
       <CardScene {...props} />
-      <Cursor />
-      <Label
-        icon={PointerIcon}
-        label="Click cover to open and close"
-        className="fixed bottom-10 left-1/2 hidden -translate-x-1/2 sm:flex"
-      />
-      <Label
-        icon={PointerIcon}
-        label="Touch cover to open and close"
-        className="fixed bottom-10 left-1/2 -translate-x-1/2 sm:hidden"
-      />
+      {loaded && (
+        <>
+          <Cursor />
+          <div className="fixed bottom-10 left-1/2 -translate-x-1/2">
+            <Label
+              icon={PointerIcon}
+              label="Click cover to open and close"
+              className="hidden sm:flex"
+            />
+            <Label
+              icon={PointerIcon}
+              label="Touch cover to open and close"
+              className="sm:hidden"
+            />
+          </div>
+        </>
+      )}
     </Suspense>
   );
 };
