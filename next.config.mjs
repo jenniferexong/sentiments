@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    SANITY_PROJECT_ID: process.env.SANITY_PROJECT_ID,
+    // SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
+    SANITY_DATASET: process.env.SANITY_DATASET,
+  },
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
