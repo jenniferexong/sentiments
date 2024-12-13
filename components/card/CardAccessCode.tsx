@@ -65,7 +65,7 @@ export const CardAccessCode: React.FC<Props> = (props) => {
               required: 'Code is required',
             })}
             autoComplete="off"
-            className="flex h-16 items-center rounded border border-white/50 bg-transparent px-4 font-ubunto-mono text-2xl tracking-[0.5em] outline-none sm:w-[400px]"
+            className="flex h-16 items-center rounded border border-white/50 bg-transparent px-4 font-ubunto-mono text-xl tracking-[0.5em] outline-none sm:w-[400px] sm:text-2xl"
           />
           <p className={errorClassName}>{errors.accessCode?.message}</p>
         </div>
