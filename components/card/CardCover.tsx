@@ -16,7 +16,7 @@ import {
   DEFAULT_CARD_COLOR,
 } from '@/data/constants';
 import { urlFor } from '@/sanity/lib/image';
-import { Root, Image } from '@react-three/uikit';
+import { Root, SuspendingImage } from '@react-three/uikit';
 import { useCardStore } from '@/store/cardStore';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -177,7 +177,7 @@ export const CardCover: React.FC<CardData> = (props) => {
             alignItems="center"
           >
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <Image
+            <SuspendingImage
               src={urlFor(props.coverImage.asset).url()}
               width="100%"
               height="auto"

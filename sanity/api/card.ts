@@ -2,6 +2,7 @@ import { CardData } from '@/data/types';
 import { CardQueryResult } from '@/sanity/generated/sanity.types';
 import { client } from '@/sanity/lib/client';
 import { cardQuery } from '@/sanity/queries/card';
+import { notFound } from 'next/navigation';
 
 const CARD_WIDTH = 3;
 
@@ -12,7 +13,10 @@ export const getCardData = async (id: string): Promise<CardData> => {
     { cache: 'no-store' }
   );
 
-  if (!data) throw new Error(`Missing card data for id: ${id}`);
+  if (!data) {
+    console.error('Card with id ', id, 'not found');
+    notFound();
+  }
 
   return {
     ...data,

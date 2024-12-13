@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 interface AdminState {
   accessCode: string | null;
+  initialize: () => void;
   setAccessCode: (code: string | null) => void;
   cardAccess: Record<string, boolean>;
   setAccessedCard: (cardId: string) => void;
@@ -10,28 +11,29 @@ interface AdminState {
 export const CARD_ACCESS_KEY = 'card-access';
 
 export const useAdminStore = create<AdminState>()((set, get) => {
-  // Load card access from sessionStorage
-  const accessJson = sessionStorage.getItem(CARD_ACCESS_KEY);
+  const initialize = () => {
+    // Load card access from sessionStorage
+    const accessJson = sessionStorage.getItem(CARD_ACCESS_KEY);
 
-  let cardAccess = {};
-
-  if (accessJson) {
-    try {
-      cardAccess = JSON.parse(accessJson);
-    } catch (error: any) {
-      throw new Error(
-        `Error parsing session storage entry: ${CARD_ACCESS_KEY}:\n${accessJson}`,
-        error
-      );
+    if (accessJson) {
+      try {
+        set({ cardAccess: JSON.parse(accessJson) });
+      } catch (error: any) {
+        throw new Error(
+          `Error parsing session storage entry: ${CARD_ACCESS_KEY}:\n${accessJson}`,
+          error
+        );
+      }
     }
-  }
+  };
 
   return {
+    initialize,
     accessCode: null,
     setAccessCode: (code) => {
       set({ accessCode: code });
     },
-    cardAccess,
+    cardAccess: {},
     setAccessedCard: (cardId) => {
       const { cardAccess } = get();
       set({ cardAccess: { ...cardAccess, [cardId]: true } });
