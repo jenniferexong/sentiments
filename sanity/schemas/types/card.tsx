@@ -1,8 +1,11 @@
 import { CardCoverPreviewField } from '@/sanity/components/CardCoverPreviewField';
 import { CardUrlField } from '@/sanity/components/CardUrlField';
+import { urlFor } from '@/sanity/lib/image';
 import { BookIcon } from '@sanity/icons';
 import dayjs from 'dayjs';
 import { defineField, defineType } from 'sanity';
+import Image from 'next/image';
+import { DEFAULT_CARD_COLOR } from '@/data/constants';
 
 const enum Group {
   Details = 'details',
@@ -133,14 +136,30 @@ export const cardType = defineType({
       date: 'date',
       coverImage: 'coverImage',
       category: 'category.name',
+      color: 'theme.cardColor.hex',
     },
     prepare(selection) {
-      const { title, category, recipient, date, coverImage } = selection;
+      const {
+        title,
+        category,
+        recipient,
+        date,
+        coverImage,
+        color = DEFAULT_CARD_COLOR,
+      } = selection;
       const formattedDate = dayjs(date).format('D MMM YYYY');
       return {
         title,
         subtitle: `${recipient} | ${category} | ${formattedDate}`,
-        media: coverImage,
+        media: (
+          <Image
+            src={urlFor(coverImage).url()}
+            alt=""
+            fill
+            objectFit="contain"
+            style={{ backgroundColor: color }}
+          />
+        ),
       };
     },
   },
