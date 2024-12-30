@@ -8,11 +8,6 @@
 **3D card viewer**
 ![rendering](assets/images/card-content.jpg)
 
-### Upcoming features
-- Card opening animation with confetti
-- Card cover image
-- Mobile support
-
 ---
 
 # Using a custom font for UIKit:
