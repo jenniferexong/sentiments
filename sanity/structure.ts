@@ -15,7 +15,43 @@ export const structure: StructureResolver = (S) =>
             .schemaType('settings')
             .documentId('settings')
         ),
-      S.documentTypeListItem('card').title('Cards'),
+      S.listItem()
+        .title('Cards')
+        .child(
+          S.list()
+            .title('Cards')
+            .items([
+              S.documentTypeListItem('card').title('All'),
+              S.listItem()
+                .title('By Category')
+                .child(
+                  S.documentTypeList('cardCategory')
+                    .title('Categories')
+                    .child((categoryId) =>
+                      S.documentList()
+                        .title('Cards')
+                        .filter(
+                          '_type == "card" && $categoryId == category._ref'
+                        )
+                        .params({ categoryId })
+                    )
+                ),
+              S.listItem()
+                .title('By Recipient')
+                .child(
+                  S.documentTypeList('recipient')
+                    .title('Recipients')
+                    .child((recipientId) =>
+                      S.documentList()
+                        .title('Cards')
+                        .filter(
+                          '_type == "card" && $recipientId == recipient._ref'
+                        )
+                        .params({ recipientId })
+                    )
+                ),
+            ])
+        ),
       S.divider(),
       S.documentTypeListItem('recipient').title('Recipients'),
       S.documentTypeListItem('cardCategory').title('Categories'),
