@@ -20,7 +20,7 @@ export const CardUrlField: React.FC = () => {
         <Inline>
           <Button
             onClick={() => {
-              navigator.clipboard.writeText(`${url}\nPassword: ${password}`);
+              navigator.clipboard.writeText(`${url}\n\nPassword: ${password}`);
               toast.push({
                 status: 'warning',
                 title: 'Copied to clipboard',
